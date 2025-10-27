@@ -1,0 +1,772 @@
+﻿
+
+
+Оглавление
+
+• method Adm(	5
+• method Ana	5
+• method Analit	5
+• method ButtonDestr	5
+• method ChangeMy	5
+• method ChgWin	5
+• method CloseLog()	5
+• method CloseWindow	5
+• method ColorDialog	5
+• method Create	5
+• method DoPaObj	5
+• method EditDoc	6
+• method EditTest	6
+• method EditText	6
+• method EndEdit	6
+• method EndOP	6
+• method Error	6
+• method Estat	6
+• method EstatSR	6
+• method EventTimer	6
+• method ExecExitCode	6
+• method Expand1	6
+• method Find	6
+• method FindAll	7
+• method FindFonEnd	7
+• method Fix	7
+• method FlatButton	7
+• method FolderDialog	7
+• method FormUserEvent	7
+• method GetBqqnump	7
+• method GetName	7
+• method GetPar	7
+• method GetProp	8
+• method GetProtocol	8
+• method Grid	8
+• method InnerC	8
+• method LoadView	8
+• method LoginWinCaption	8
+• method MenuAn	8
+• method MenuAr	8
+• method MenuCre	8
+• method MenuEx	8
+• method MenuGr	8
+• method MenuQ	8
+• method MenuView	9
+• method MenuWoc	9
+• method Message	9
+• method Move	9
+• method NewResW	9
+• method NextEdit	9
+• method NoSort	9
+• method Obj	9
+• method ObjAuto	10
+• method ObjSort	10
+• method OnAdvMEdExit	10
+• method OnAdvMEdExitErr	10
+• method OnAfterEdit	10
+• method OnAutoDragging	10
+• method OnAutoEndDragging	10
+• method OnCEClick	10
+• method OnCEKeyDown	10
+• method OnColResize	10
+• method OnCommonEditExit	10
+• method OnControlClick	10
+• method OnDTP	11
+• method OnDocumentClose	11
+• method OnDocumentSave	11
+• method OnDragStarting	11
+• method OnItemClickT1	11
+• method OnItemClickT2	11
+• method OnItemDblClickT1	11
+• method OnItemDblClickT2	11
+• method OnKeyDown	11
+• method OnKeyPress	11
+• method OnMSWordClose(	11
+• method OnMoneyEditExit	11
+• method OnMonthEditExit	11
+• method OnScroll	11
+• method OnSelectDate	12
+• method OnTabCaption	12
+• method OnTabChange	12
+• method OnTabVisible	12
+• method OpenCFX	12
+• method OpenCHelp	12
+• method OpenDHelp	12
+• method OpenDate	12
+• method OpenDialog	12
+• method OpenDoc	13
+• method OpenEvent	13
+• method OpenFolderDialog	13
+• method OpenHelp	13
+• method OpenIE	13
+• method OpenLoadFile	13
+• method OpenLoadFileDo	13
+• method OpenMedia	13
+• method OpenOC	13
+• method OpenPic	14
+• method OpenPicEdit	14
+• method OpenQueryPar	14
+• method OpenReadFile	14
+• method OpenText	14
+• method OpenTimer	14
+• method OpenVHelp	14
+• method OpenWinColorDialog	14
+• method OpenWinColorDialogMenu	15
+• method OpenWinDialog	15
+• method OpenWindow	15
+• method Print	17
+• method ProjVerNotOlder	17
+• method Question	17
+• method QuestionM	17
+• method ReadClientFile	17
+• method RecCor	17
+• method RecDel	17
+• method RecDelOref	17
+• method RecDelRel	18
+• method RecIns	18
+• method RecNew	18
+• method RecNewD	18
+• method RecNewP	18
+• method RecObj	18
+• method RecPost	18
+• method RecRaz	18
+• method RecRel	18
+• method RecRelAll	18
+• method RecRev	19
+• method RecTmp	19
+• method RecVer	19
+• method RecVerNoDef	19
+• method RecVerOp	19
+• method RedTest	19
+• method ResetSrt	19
+• method RestView	19
+• method RestView8	19
+• method RestoreDirTree	19
+• method SRColWidth	19
+• method SaveToClipbrd	19
+• method SaveView	19
+• method SaveView8	20
+• method SetBLOB	20
+• method SetPar	20
+• method SetZTMP	20
+• method Setdpwin	20
+• method Sort	21
+• method SplitterBar	21
+• method StartEdit	21
+• method StartEditT1	21
+• method StartEditT2	21
+• method T1ColHButton	21
+• method T2ColHButton	21
+• method T2ColHButtonClr	21
+• method T2ColHButtonDo	22
+• method TFormOnClose	22
+• method TMenuItemOnClick	22
+• method TToolButtonOnClick	22
+• method TestPaste	22
+• method TextEdit	22
+• method ToolbarCreateButton	22
+• method UserClass	22
+• method Util	22
+• method VLoadData	22
+• method Value	22
+• method Valueer	23
+• method VerCall	23
+• method ViEdit	23
+• method Virt	23
+• method Wait	23
+• method WrWin	23
+• method Xecute	23
+• method crst	23
+• method csav	23
+• method mImpOp	23
+• method oneWin	23
+• method qqtime	23
+• method s112	23
+• method wC	24
+• method wG	24
+• method wM	24
+• method wMByf	24
+• method wMet	24
+• method wP	24
+• method wTR	24
+• method wbmp	24
+• method wbut	24
+• method wbuttb	24
+• method wcelldpar	24
+• method wcellpic	24
+• method wcellsel	24
+• method wcellttips	25
+• method wcre	25
+• method wcrm	25
+• method wcro	25
+• method wcroCell	25
+• method wdbl	25
+• method wfoc	25
+• method wfot	25
+• method wgre	25
+• method wipa	25
+• method wpic	26
+• method wpoe	26
+• method wpot	26
+• method wqqotree	26
+• method wrot	26
+• method wwde	26
+• method wwrefr	26
+• method wwww	27
+• method wwwwFCBUT	27
+• method wwwwZXXadd	27
+• method zSet	27
+
+
+class %Library.TqARM extends %Library.RegisteredObject 
+
+
+
+
+Properties
+
+• property BLOB As %Stream 
+• property BLOBcs As %Integer 
+• property NewProperty1 As %Library.String 
+
+
+• method Adm(Arg1 As %String) returns nothing. 
+Установка/сброс (Arg1=1/0=W("Zadm")) режима Администратор. Если Arg1 не задан - переключение. 
+• method Anal(Arg1 As %String) returns nothing. 
+Вычисление аналитик. Arg1=0 - по значениям Arg1=1 - по каждому слову значения. Управляющие переменные: Vs(qqnump, 99, "Anal") =0/1 - аналитика по значениям/словам значений Vs(qqnump, 99, "Anal", 0) =1 - учет пустых значений Vs(qqnump, 99, "Anal", 1)=порог экземпляров Vs(qqnump, 99, "Anal", 2)=полное дерево 
+• method Analit (Arg1 As %Library.String) returns nothing. 
+• method ButtonDestr (qqci0 As %Library.String) returns nothing. 
+• method ChangeMy (inpold As %Library.String, new As %Library.String) returns %Library.Integer 
+• method ChgWin (Arg1 As %Library.String) returns %String 
+Действия по смене окна. Arg1=1 - сброc qqred при смене окна 
+• method CloseLog() returns %Library.String 
+• method CloseWindow(Arg1 As %Library.String) returns nothing. 
+Закрытие окна экранной формы Arg1 (qqnump экранной формы). Никаких действий но закрытию не производится Самое первое окно закрывать нельзя (qqnump=0). !!!Закрытие текущего окна может привести к побочным эффектам!!! Применение в действии по открытию окна (для закрытия предыдущего) проблематично. Работает в развертках-действиях. Например, вызов нового окна с закрытием текущего: N qqnumpod S qqnumpod=qqnump D qARM.OpenWindow(,,,,,xxx),qARM.CloseWindow(qqnumpold) 
+• method ColorDialog(Sender As %Library.String) returns %Library.String 
+• method Create() returns %String 
+• method DoPaObj(Obj As %Library.String, Mod As %Library.String, Str As %Library.String) returns nothing. 
+Действие в контексте объекта-предка Obj текущего объекта. Объект должен существовать в отображении. Возврашает 1, если действие выполнилось (найден предок), иначе - 0. Предназначено для использования в постдействиях (X5240). Mod="X" - выполнение str по Xcute Mod="W" - перевывод списка понятий (через пробел) str. Элемент списка: qqw - код понятия; qqw=выражение - присвоить результат выражения; qqw=@ - присвоить значение по умолчанию. Если происходит присваивание, то автоматическая коррекция. 
+• method EditDoc(Arg1 As %String) returns %String 
+Завершение редактирования документа. 
+• method EditTest(qqo As %Library.String, qqw As %Library.String, NoMes As %Library.String) returns %Library.String 
+Проверка допустимости коррекции. 
+• method EditText(Sender As %String, Text As %String, Button As %Integer) returns %String 
+• method EndEdit(qqstr As %String, qqkey As %String, Arg1 As %Library.String, Arg2 As %Library.String) returns %String 
+Завершение редактирования. qqstr - редактируемое значение qqkey - код клавиши завершения Arg1=1 - блокировка перехода к следующему понятию Arg2=1 - блокировка AfterEdit для навесных элементов 
+• method EndOP(Arg1 As %Library.String) returns %String 
+Проверить законченность операций с базой Проверяется завершенность редактирования и неоходимсть коррекции текущего экземпляра объекта. Arg1=1 - выполнить и при редактировании значения (qqred'=""). Возвращает 1 - не закончены, 0 - закончены. 
+• method Error() returns nothing. 
+• method Estat(Arg1 As %Library.String) returns nothing. 
+Сохранение состояние развернутости в Vs(qqnump,2,qqo,qqc)=1 для текущего объекта и его предков. Arg1=1 - до объекта - Vs(qqnump,2,qqo)=1 
+• method EstatSR(Arg1 As %Library.String) returns nothing. 
+Сохранение (Arg1=1) восстановление (Arg1="") удаление (Arg1=0) состояния свертки для текущего отображения 
+• method EventTimer(Sender As %String) returns %String 
+• method ExecExitCode(command As %Library.String, code As %Library.String) returns %Library.String 
+Событие завершения процесса, запущенного с помощью ModalExec (при Par5=1), с возвратом кода завершения. D qARM.wM("-qARM","ModalExec",Par1[,Par2,Par3,Par4,Par5]) ([] - необязательные параметры) Par1 - командная строка Par2 - флаг скрытия окна приложения Par3 - действие после успешного выполнения Par4 - действие при ошибке выполнения Par5 - вызывать событие в Cache с передачей кода завершения 
+
+• method Expand1(Arg1 As %Library.String, Arg2 As %Library.String, Arg3 As %Library.String) returns nothing. 
+Свертка/развертка узла дерева экземпляров (первая строка объекта!!!). Информация о текущем свернутом Vt(qqnump,"Expand")=qqci_" "_qqo_" 0", где qqci - текущий индекс в Vc(qqnump,qqci) Если новый разворачивается, старый сворачивается Arg1 - qqci Arg2 =0/1 - свернуть/развернуть Если Arg1="", то Arg1=Vc(qqnump) - текущий qqci Arg3=1 - тестировать на предмет развертки для Arg1 (если вывели объект, подчиненный свернутому) 
+• method Find(Arg1 As %String, Arg2 As %String, qqolst As %String, Con As %Library.String, NoDial As %Library.String, NoReFind As %Library.String, NoWarning As %Library.String) returns nothing. 
+Запуск поиска. Arg1=0 - выдача экземпляров с условием. Arg1=1 - выдача полного поддерева вершины поискового образа. Arg2 - max кол-во найденных экземпляров qqolst - содержит список объектов в варианте продолжения поиска по понятию в нескольких объектах. NoReFind=1 - не входить в режим Уточнение после поиска NoDial=1 - не выводить сообщения (ничего не найдено, ошибка в условии) NoWarning=1 - не выводить предупреждения "Нет условий на невиртуальные объекты.Поиск МОЖЕТ занять много времени!!!" Управляющие переменные: Vs(qqnump, 99, "Find")=0/1 - поиск(отметка) экземпляров/поддерева Vs(qqnump, 99, "Find", 1) =1 - учитывать одинаковые понятия в разных объектах Vs(qqnump, 99, "Find", 2) - максимальное количество экземпляров (если не задано - ищутся все) Vs(qqnump, 99, "Find",5) =1 поиск без учета регистра (Поисковый образ должен быть большими буквами !!!) 
+
+• method FindAll() returns nothing. 
+Параметры поиска по всем объектам 
+
+• method FindFonEnd(Arg1 As %Library.String) returns nothing. 
+
+• method Fix(Arg1 As %String, Arg2 As %String = 0, Arg3 As %String, Arg4 As %Library.String, NoMes As %Library.String, Nopos As %Library.String) returns nothing. 
+Фиксировать объект Arg1. Если Arg1 не задан, расфиксировать последний зафиксированный объект ( в Vs(qqnump,7)). Arg2=1 жесткая фиксация. Если нет, то возможно перемещение по обектам вершины фиксации. Arg3=1 - сделать кнопку неактивной Arg4=1 - блокировка перевывода NoMes=1 - не выдавать сообщение о невозможности фиксации Nopos=1 - не позиционироваться (в противном случае позиционирование на первую строку фиксируемого объекта) 
+
+• method FlatButton (Arg1 As %Library.String) returns nothing. 
+
+• method FolderDialog (Sender As %Library.String, Arg2 As %Library.String) returns %Library.String 
+Arg2 - выбранная папка; если выбор отменен - пустая строка. 
+
+• method FormUserEvent (Arg1 As %Library.String, Arg2 As %Library.String) returns %Library.String 
+Пользовательское событие 
+
+• method GetBqqnump (Arg1 As %Library.String) returns nothing. 
+Получение qqnump базового окна (для текущего встроенного) Arg1=1 - переход в контекст этого окна 
+
+• method GetName (qqview As %Library.String, Obj As %Library.String, Woc As %Library.String, Arg1 As %Library.String) returns %Library.String 
+Имя в отображении (выводимое) qqview - код отображения (пусто - текущее) 
+
+• method GetPar (qqpar As %String, qqview As %String, qqObj As %String, y As %String, x As %String, qqnumpmem As %Library.String, tmplval As %Library.String) returns %String 
+Взять параметр отображения. qqpar - код понятия параметра (например, "x121". можно использовать сокращенную форму - 121). qqview - код отображения. По умолчанию Vo(qqnump) - текущее отображение. Если есть View - то используется оно (нужно для печатных форм, когда текущий контекст и вызываемая форма - разные отображения). !!! ЕСЛИ ЗАДАНО qqview, то НЕОБХОДИМО задать y и х а НЕ qqw qqObj - код объекта y - строка (или понятие) x - колонка (если Arg4 не понятие) qqnumpmem - номер открытого отображения (находящегося в памяти) Параметры берутся из описания отображения (см. системный объект базы данных XView). Если отсутсствует, то проверяется наличие параметра в описаниии объекта или понятия (системные объекты базы CxObj, CxWoc). Этим обеспечивается наследование. При первом взятии параметра его значение переносится в массив Vo(qqnump) и при следующих обращениях берется уже из массива. Структура массива (qqwp - код понятия параметра в сист.обекте XView): Vo(qqnump)=код_отображения Vo(qqnump,-1)=имя отображения (X11) Vo(qqnump,-1,$E(qqwp,3,5))=значения параметра отображения qqwp=x1..., X1.... Vo(qqnump,-1,2,$E(qqwp,3,5))=значения параметра действия qqwp=x2..., X2... Vo(qqnump,-1,3,$E(qqwp,3,5))=значения параметра печати qqwp=x3..., X3... Например, Vo(qqnump,-1,28)=список отображений печати (X128) Vo(qqnump,код_об)=имя объект (X51) Vo(qqnump,код_об,0)=длина кода (X50) Vo(qqnump,код_об,$E(qqwp,3,5))=значения параметра объекта qqwp=x5..., X5... Vo(qqnump,код_об,0,Nстр)=ссылка на объект-потомок (X60) Vo(qqnump,код_об,0,Nстр,Nкол)=тип_содержимое ячейки (x70_X71) Vo(qqnump,код_об,0,Nстр,Nкол,$E(qqwp,3,5))=значения параметра ячейки объекта qqwp=x7..., X7.. Часть параметров переносится в массив Vo сразу при открытии отображения (они всегда нужны) в методе qSys.CreVo. Этот метод создает дополнительные узлы в Vo. Vo(qqnump,код_об,5)=объектная_ссылка Vo(qqnump,код_об,10)=кол-во понятий (N) Vo(qqnump,код_об,10,N)=qqw Vo(qqnump,код_об,11,qqw)=Nстр_" "_Nкол Vo(qqnump,-1,6,объектная_ссылка)="" - массив всех объектных ссылок Vo(qqnump,-1,9)=Nпоследней колонки Vo(qqnump,-1,9,Nкол)=параметры_колонки (первые три из X72) 
+
+• method GetProp() returns nothing. 
+Считывание свойств 
+
+• method GetProtocol() returns %String 
+
+• method Grid(Color As %String) returns nothing. 
+• method InnerC(Arg1 As %Library.String) returns nothing. 
+• method LoadView(Arg1 As %String, Arg2 As %String) returns %String 
+Загрузка отображения Arg1. Arg2=1 - запуск поиска по текущему поисковому образу 
+• method LoginWinCaption() returns %Library.String 
+Возвращает имя приложения. Используется в окне регистрации. Если первый символ имени -, то префикс qWORD-XML не выводится 
+
+• method MenuAn(Arg1 As %String) returns nothing. 
+Начальные установки при смене отображения. Arg1["B" - установки кнопок тулбаров. Arg1["A" - меню аналитик Arg1["F" - меню поиска Arg1["D" - меню диаграмм Arg1="" - все. 
+
+• method MenuAr(Arg1 As %Library.String) returns nothing. 
+
+• method MenuCre(Arg1 As %Library.String, Arg2 As %Library.String, Arg3 As %Library.String, Arg4 As %Library.String, NoTab As %Library.String) returns nothing. 
+Создание переназначаемых меню дополнительной панели отображения. Arg1 - кол-во кнопок (1-4, 0 - нет панели) Arg2=1 только переназначение активности кнопок и пунктов меню NoTab=1 - без переинициализации закладок 
+
+• method MenuEx(Ngr As %String, Arg1 As %String, Arg2 As %Library.String) returns %Library.String 
+
+• method MenuGr(Ngr As %String, Arg1 As %String) returns nothing. 
+Всплывающие меню граф 1-9 дерева объектов. 
+
+• method MenuQ() returns nothing. 
+
+• method MenuView (qqpar1 As %String, qqpar2 As %String) returns nothing. 
+Создание меню отображений (emno) qqpar1=1 -`включать код отображения в меню qqpar2=1 - переотметка текущего отображения 0 или пусто- создание -1 - удаление меню 
+
+• method MenuWoc(Mname As %String, lwoc As %String, lz As %String, noreset As %String = 0, Xec As %String, add As %Library.String, cond As %Library.String, md As %Library.String, pos As %Library.String, reset As %Library.String, qorder As %Library.String = 1) returns nothing. 
+Создание меню из словарей. Mname - имя меню (уникальное имя объекта меню). При вызове меню в качестве развертки используется код понятия. lwoc - список словарей (через пробел или $P(lwoc,"/",2)). Или список значений через ~. lz - список текущих значений (для отметки в меню). noreset=1 - не включать пункт меню СБРОС. Xec - действие по выбору (новый вариант организации меню через словари) Если понятие на Z, то предполагается, что значения в словаре содержатся в W(qqw,код)=значение Если Xec'="" - без привязки к текущей ячейки дерева экземпляров если pos'=1 Имя добавочного пункта (выводится вконце после черты). Если пусто, то "иное..." pos=1 привязка к нижнему краю текущей ячейки дерева экземпляров. pos=-1 - не создавать меню (используется для вызова из доп. панели. См. метод MenuCre) md=1 - меню действий. Для меню по экземплярам объекта есть понятие XMenuDo - действие по выбору !!! В варианте вызова меню через развертку типа Действие имя меню (Mname) должно начинаться на XU) reset - в любом случае (вне зависмости от меню действий) включить (1) исключить (0) пункт Cброс qorder - порядок обхода (1-прямой, -1 - обратный) словарей. 
+
+• method Message(message As %String, title As %String, type As %Library.String) returns nothing. 
+Вывод сообщения type= 0 - Warning, 1 - Error, 2 - Information, 3 - Confirmation, 4 - Custom; Использована "ShowMessagePos" d ..wM("-qARM","ShowMessagePos",par1,par2,par3,par4,par5,par6) par1- окно, относительно которого центрировать окно сообщения; par2 - текст сообщения; par3 - заголовок окна сообщения; par4 - тип окна: 0 - Warning, 1 - Error, 2 - Information, 3 - Confirmation, 4 - Custom; par5 - определяет, какие кнопки присутствуют: 0 - "OK", 1 - "OK","Cancel", 2 - "Yes","No","Cancel"; 3 - "Yes","No" par6 - определяет на какой кнопке фокус (нумерация начинается с 2, в случае par4=4 с 1). Пример: d ..wM("-qARM","ShowMessagePos",qwin,"text","title",4,2,3) 
+
+• method Move(Arg1 As %Library.String, Arg2 As %Library.String) returns nothing. 
+Экранная отработка перемещений по базе (относительно текущего объекта и экземпляра) Arg1 = Beg -первый Up - предыдущий Down - следующий End - последний Arg2=1 внешний вызов (из скрола перемещений - обытие ..OnScroll) 
+• method NewResW() returns %String 
+поиск нового окна для ресурса 
+• method NextEdit(qqwt As %String, Arg1 As %Library.String) returns %String 
+Редактирование текущей ячейки или переход к редактированию следующей. Arg1=1 - только позиционирование 
+
+• method NoSort(Arg1 As %Library.String) returns nothing. 
+Сброс сортировки Arg1=1 - без перевывода 
+
+• method Obj(curobj As %Library.String, curqqc As %Library.String, next As %Library.String) returns nothing. 
+Переход к ближайшему экземпляру заданного объекта next=1 - следующий за текущим (curqqc задавать не надо). В варианте "+"_curobj устанавливается автоматически next=1 
+
+• method ObjAuto(Obj As %Library.String, Arg1 As %Library.String, qqdat As %Library.String) returns %Library.String 
+Отработка автовыбора 
+
+• method ObjSort() returns %String 
+Сменить текущий объект на объект сортировки. Возвращает 0, если сортировка выключена или нельзя уйти с текущего объекта. 
+• method OnAdvMEdExit(Sender As %Library.String, Str As %Library.String, Key As %Library.String, Shift As %Library.String, Error As %Library.String) returns %Library.String 
+
+• method OnAdvMEdExitErr(Arg1 As %Library.String) returns nothing. 
+
+• method OnAfterEdit(Sender As %String, ByRef Cancel As %Integer, ByRef String As %String, Index As %Integer, ColNum As %Integer, ItemDS As %String, ItemD As %Integer) returns %String 
+Возникает при потере фокуса редактируемой ячейкой. Используется обратная передача по ссылке: Cansel=1 - запрет завершения редактирования String - значение строки, заносимое после редактирования в ячеейку. 
+
+• method OnAutoDragging(Sender As %Library.String, Index As %Library.Integer, Button As %Library.Integer, Shift As %Library.Integer) returns %Library.String 
+
+• method OnAutoEndDragging(Sender As %String, qqy As %Integer, qqbut As %Integer, Shift As %Integer, Alloved As %Integer, qqdat As %String, qqx As %Integer) returns %String 
+
+• method OnCEClick(Sender As %String, CurrString As %String) returns %String 
+
+• method OnCEKeyDown(Sender As %String, ByRef Key As %Integer, Shift As %Integer, qqy As %Integer, qqx As %Integer, qqstr As %String) returns %String 
+
+• method OnColResize(Sender As %Library.String, data As %Library.String, order As %Library.String) returns %Library.String 
+tdv 7.6.2006 - динамическое получение размеров колонок Параметры: Sender - qwin_"."_T2 data - список размеров колонок в px через пробел order - порядок колонок. Список чисел через пробел. Число означает позицию, в которой находится данная колонка 
+
+• method OnCommonEditExit(Tree As %Library.String, EditType As %Library.Integer, Value As %Library.String, Key As %Library.Integer, Shift As %Library.String, ErrorFlag As %Library.Integer) returns %Library.String 
+завершение редактирования в новом дереве Tree - дерево EditType - тип редактирования Value - значение Key - код клавиши завершения редактирования или 0 - при потере фокуса Shift - состояние Shift-клавиш ErrorFlag - флаг неверного значения (для тип 7 - месяц-год ) ??? Старт редактирования - см. метод wfoc ( wfocnew ) 
+
+• method OnControlClick(Sender As %Library.String, button As %Library.String, qqxx As %Library.String, qqy As %Library.String) returns %Library.String 
+qqxx - для обработки OnHeaderClik 
+
+• method OnDTP(Sender As %String, Date As %String, Key As %Integer, Shift As %String) returns %String 
+
+• method OnDocumentClose(Sender As %Library.String) returns nothing. 
+Закрытие MSWORD запущенного по D qARM.wC("TOpenDocument",ObjectName,FileName) 
+
+• method OnDocumentSave(Sender As %Library.String) returns nothing. 
+
+• method OnDragStarting(Sender As %String, Arg1 As %Integer, Arg2 As %Integer) returns %String 
+пока не нужен 
+
+• method OnItemClickT1(Sender As %String, qqy As %Integer, qqx As %Integer, qqarea As %Integer, qqbut As %Integer, Shift As %Integer, qqdat As %String, ItemData As %Integer, qqxR As %Library.Integer) returns %String 
+
+• method OnItemClickT2(Sender As %String, qqy As %Integer, qqx As %Integer, qqarea As %Integer, qqbut As %Integer, Shift As %Integer, qqdat As %String, ItemData As %Integer, qqxR As %Library.Integer) returns %Library.String 
+qqxR - реальная колонка (вне зависимости от mergeInto) 
+
+• method OnItemDblClickT1(Sender As %String, qqy As %Integer, qqx As %Integer, qqarea As %Integer, qqbut As %Integer, Shift As %Integer, qqdat As %String, ItemData As %Integer, qqxR As %Library.Integer) returns %String 
+
+• method OnItemDblClickT2(Sender As %String, qqy As %Integer, qqx As %Integer, qqarea As %Integer, qqbut As %Integer, Shift As %Integer, qqdat As %String, ItemData As %Integer, qqxR As %Library.Integer) returns %String 
+qqxR - реальная колонка (вне зависимости от mergeInto) 
+
+• method OnKeyDown(Sender As %String, ByRef Key As %Integer, Shift As %String) returns %String 
+
+• method OnKeyPress(Sender As %String, ByRef Key As %String) returns %String 
+
+• method OnMSWordClose(Sender As %Library.String) returns %Library.String 
+
+• method OnMoneyEditExit(Sender As %Library.String, Mony As %Library.String, Key As %Library.String) returns %Library.String 
+Завершение редактирования для Mony 
+
+• method OnMonthEditExit(Sender As %Library.String, Month As %Library.String, Year As %Library.String, ErFlag As %Library.Integer, Key As %Library.Integer) returns %Library.String 
+Завершение редактирования даты YEARMONTH 
+
+• method OnScroll(Sender As %Library.String, Pos As %Library.String) returns %Library.String 
+
+• method OnSelectDate(Sender As %Library.String, date As %Library.String) returns %Library.String 
+
+• method OnTabCaption(qqnumpTAB As %Library.String, qqTABg As %Library.String = 0, Img As %Library.String) returns nothing. 
+Перевывод заголовков закладок. Имеет смысл, если они выражения. qqnumpTAB - qqnump окна закладки (по умолчанию - текущее) qqTABg - код группы закладок (по умолчанию 0) Img=1 - перевывести картинки закладок. Имеет смысл, если их ресурс выражение. 
+
+• method OnTabChange(Sender As %Library.String, NTab As %Library.String, qqfTab As %Library.String, qqnumpold As %Library.String) returns %Library.String 
+Обработка события переключения закладок. В действии по переключению и в действиях по входу в отображения закладок доступны переменные: NTab, NTabOld, CTab,CTabOld (новый и старый коды закладок) qqoTab,qqcTab,qqparTab - переменные ползователя (существуют только в момент переключения закладок) При использовании для программного переключения: Sender= qqnump_"."_код_группы NTab - физический номер закладки. Можно использовать и код закладки (X40). Не задан - текущая закладка qqfTab - Параметр пользователя. Будет доступен в действии по переключению закладки и в действиях по входу в отображения закладки. qqnumpold - код отображения, для которого будут обработаны параметры выхода (X172) - т.е. симмитировано закрытие с выполнением предписанных действий) 
+
+• method OnTabVisible(qqnumpTAB As %Library.String, qqTABg As %Library.String = 0, NTab As %Library.String, Visible As %Library.String) returns nothing. 
+Видимость/невидимость закладки. qqnumpTAB - qqnump окна закладки (по умолчанию - текущее) qqTABg - код группы закладок (по умолчанию 0) NTab - текущий номер закладки или ее код (см. метод OnTabChange или описание закладок) Visible =0 или 1 Если NTab не задан или пуст - пересчет видимости всех закладок с заданнными условиями видимости 
+
+• method OpenCFX(qqpar1 As %String, Arg1 As %Library.String, Dx As %Library.String, Dy As %Library.String, Name As %Library.String) returns %Library.String 
+
+• method OpenCHelp(comp As %String, Arg1 As %Library.String) returns %String 
+Выдача окна пояснений по компонентам qWORD. $E(comp) = W - понятие, O -объект, V - отображение затем, код компоненты. Для понятия - кодпонятия_"_"_кодобъекта Если comp=2, то пояснения по текущему понятию. 
+• method OpenDHelp(part As %String) returns %String 
+Вызов раздела документации. part - идентификатор раздела (через запятую). 
+• method OpenDate(Date As %Library.String, qqw As %Library.String, Xec As %Library.String) returns nothing. 
+Вызов окна календаря с возможностью выбора даты Date - начальная дата (не задана - текущая) qqw - код понятия куда возвращается выбранная дата. Т.е дата возвращается в W(qqw). Если режим редактирования и не Z*-понятие, то добавляется в qqwchg. Xec - действие (по Xecute) выполняемое после выбора. 
+
+• method OpenDialog(Sender As %String) returns %String 
+Метод вызывается клиентом по завершению выбора файлов (Открыть) в окне диалога. Выбранные файлы в qARM("qpars",N) где N=0,1... порядковые номера выборов. 
+
+• method OpenDoc(qqpar1 As %String, qqpar2 As %String, qqpar3 As %String, qqpar4 As %String, qqpar5 As %Library.String, qqpar6 As %Library.String, qqpar7 As %Library.String) returns %String 
+Редактор текста (документа). qqpar1 - ссыка на массив, или код понятия ??? qqpar2 = 1 с возможностью редактирования, 2 - модификация без подтверждения qqpar3 = dx,dy. Для развертки берутся из параметров. qqpar4 - заголовок окна qqpar5 - фонт и размер символа 9через запятую). Для развертки берутся из параметров. qqpar6 - 0 или не задан RichText 1 - MSWord 2 - MSWordPad qqpar7 - ограничение на длину слова (в символах). По умолчанию - 150 
+• method OpenEvent(Arg1 As %Library.String) returns nothing. 
+Выполнение строки Arg1 в рамках события 
+
+• method OpenFolderDialog(Arg1 As %Library.String, Arg2 As %Library.String, Arg3 As %Library.String) returns nothing. 
+Вызов окна выбора папки. Arg1 - действие по Xcute, выполняемое по завершению выбора ( см. метод FolderDialog). Выбранная папка помещается в qARM("qpars",0) Arg2 - начальная папка, например "C:\" Arg3 - если есть, то имя узла для записи списка файлов выбранной папки. Разделитель имен файлов - "*" 
+
+• method OpenHelp(Arg1 As %String) returns nothing. 
+вывод Help'a (*.chm) 
+
+• method OpenIE(qqpar1 As %String, qqpar2 As %String, qqpar3 As %String, qqpar4 As %String = 0) returns nothing. 
+Запись массива qqpar1 в файл qqpar2 с вызовом IE (если qqpar3=1). Параметры: - qqpar1 - ссылка на массив, в котором назодятся данные; если равен числу, то формируется ссылка "^CacheTemp("_qqpar1_","_$J_")"; Для вывода в файл значению qqpar1 присваивается значение 0, которое после вывода равно "" - qqpar2 - полный путь к файлу; если равен "", то формируется файл temp.xml в директории, где лежит qarm.exe (см. метод qWEB.ClientPath()). - qqpar3 - равен 1 - вызывается IE, иначе просто выход - qqpar4 - определяет видимость IE (по умолчанию (0) IE видим) 
+
+• method OpenLoadFile(qqo As %Library.String, qqw As %Library.String, qqc As %Library.String, XDo As %Library.String, size As %Library.String = 0) returns nothing. 
+Выбор и загрузка файла (со стороны клиента) в понятие qqw (Y* или T*) соответствующего экземпляра объекта XDo - действие (по Xcute) после завершения загрузки (например, "D qARM.wqqotree()" ) size - длина; 0 - весь файл; -1 - построчно текстовый файл 
+
+• method OpenLoadFileDo(metod As %Library.String, dir As %Library.String) returns nothing. 
+Выбор файла, затем построковая загрузка с выполнением метода metod Считанная строка в переменной FileBlk Метод должен вернуть 1 для продолжеения, или -1 для прекращение обработки файла 
+
+• method OpenMedia(Arg1 As %String) returns nothing. 
+
+• method OpenOC(qqpar1 As %Library.String, Arg1 As %Library.String) returns %Library.String 
+Вызов диаграммы Objective Chart (MFC) qqpar1=1 - наличие панели инструментов (меню) Arg1 - тип диаграммы 
+
+• method OpenPic(qqpar1 As %String, qqpar2 As %String, qqpar3 As %String, qqpar4 As %Library.String) returns nothing. 
+вывод картинки qqpar1 в окно ;qqpar2 - заменяемое имя последней директории ;qqpar3 - заголовок 
+
+• method OpenPicEdit(Res As %Library.String) returns nothing. 
+Редактор bmp-картинок Res - загружаеый ресурс (M,глоб_ссылка, F,файл) 
+
+• method OpenQueryPar(cond As %Library.String, condZ As %Library.String, condDo As %Library.String, par3 As %Library.String) returns nothing. 
+Диалоговый ввод параметров cond - список параметров в формате диалоговых условий запроса (понятие XQcond) condZ - начальные значения (через ~). Если диапазон - начало-конец (через -) condDo - Действие по кнопке OK (выполняется по Xcute). Если в действии вызов окна, то в qARM.OpenWindow необходимо установить седьмой параметр в 1 (возврат контекста). par3 - параметр 3 (параметры окна) для окна ввода. Введенные параметры будут находится (в момент действия по кнопке) в W("Z"_номерпараметра). Для диапазона в W("Za"_номерпараметра) и W("Zb"_номерпараметра) После действия (или при потере фокуса) форма закрывается. Используется автоматически формируемое отображение sysQ. См. метод qSYS.sysView. 
+
+• method OpenReadFile(file As %Library.String, mas As %Library.String, size As %Library.String) returns nothing. 
+Запись файла (с клиента!!!) в массив. file - спецификация файла на клиенте (!!!). mas - ссылка на поддерево массива. Ниже будут созданы индексы 0, 1, 2 с содержимым файла размером size size - размер считанной порции Например, D qARM.OpenReadFile("c:\aaa\test.doc",$NA(^Q(1,qqo,qqc,"Ypic")),255),32000) 
+
+• method OpenText(Text As %String, Xec As %String, Capt As %String, Width As %String) returns %String 
+Ввод строки текста. 
+
+• method OpenTimer(time As %String, Arg1 As %String) returns nothing. 
+Выполнение действия Arg1 по событию таймера через time миллисекунд. Следует использовать ТОЛЬКО в случае уверенности в том, что действие контекстонезависимо и все используемые переменные, объекты и т.д. будут существовать на момент его выполнения. ! НЕ СЛЕДУЕТ использовать в целях выполнения действия вне текущего события - для этого предназначен метод Wait ! Если в момент срабатывания таймера клиент qARM будет занят, действие будет отложено еще на time миллисекунд. Таймер создается как потомок текущего окна, и если оно будет закрыто до его срабатывания, таймер будет уничтожен и действие НЕ будет выполнено. 
+
+• method OpenVHelp() returns nothing. 
+Пояснения по текущему отображению 
+
+• method OpenWinColorDialog(Arg1 As %Library.String, Arg2 As %Library.String) returns nothing. 
+Вызов окна выбора цвета. Arg1 - действие по Xcute, выполняемое по завершению выбора ( см. метод ColorDialog). Выбранный цвет в qARM("qpars","сolor") Arg2 - цвет по умолчанию при входе в диалог. 
+
+• method OpenWinColorDialogMenu() returns nothing. 
+
+• method OpenWinDialog(Arg1 As %String, Filter As %Library.String = "", id As %Library.String = "", de As %Library.String = "", fn As %Library.String = "", save As %Library.String, mode As %Library.String) returns %String 
+Вызов окна выбора файлов. Arg1 - действие по Xcute, выполняемое по завершению выбора ( см. метод OpenDialog). Выбранные файлы в qARM("qpars",N) где N=0,1... порядковые номера выборов. Filter - определяет список типов файлов, например 'Text files (*.txt)|*.TXT|All files |*.*;' id - директория по умолчанию de - расширение по умолчанию save - диалог сохранения файла (по умолчанию - открытия) mode - выбор только одного файла (по умолчанию - множественный выбор) 
+
+• method OpenWindow(qqpar1 As %String, qqpar2 As %String, qqpar3 As %String, qqpar4 As %String, qqpar5 As %String, qqpar6 As %String, qqpar7 As %String, nsp As %Library.String, child As %Library.String, constr As %Library.String) returns nothing. 
+Вызов экранной формы формы на интерпретацию (создание окна). после вызова: $$$Relind_qview - ссылка на релевантные Vo(qqnump) - код отображения qqpar1=1 - вызов в режиме дизайнирования qqpar3 - X129_" "_X162_" "_X163 (Параметры окна, авторазмеры, мах строк в ячейке) . Создается Vo("par",-1,29),Vo("par",-1,62), Vo("par",-1,63) qqpar4 - список через пробел: 1 - код экземпляра; 2 - код объекта; 3 - признака включения редактирования ;1 - режим ввода; 0 - удаляется кнопка перехода в редактирование на верхней панели инструментов. Аналогичный эффект - Set W("ZBtred")="00" в действии по входу в отображение. 4 - глобальная ссылка (если физическое дерево) 5 - код объекта фиксации. 6 =1 - признак жесткой фиксации 7 =1 - признак неснимаемой фиксации qqpar5=-1 - сброс переченя релевантных. qqpar5=0 - вход в режим уточнения, если перечень релевантных существует. qqpar5=1 - запуск поиска по текушему поисковому образу (..Find()). Если qqpar5=2 - добавление При поиске: $P(qqpar5," ",2)=1 - выход из формы, если ничего не найдено (qqpar5="1 1"). $P(qqpar5," ",3)=1 - остаться в режиме Выбор (иначе - Уточнение) Для передачи поискового образа перед вызовом окна нужно заполнить Vs("par",8,qqo,qqw)=условие qqpar6 - код вызываемого отображения. qqpar7=1 - возврат контекста вызова. nsp - вызов отображения из другого NameSpace child - встраивание в окно-родитель. Содержит (через запятую, но можно и пробел) описание места встраивания: - (Y1) код объекта окна-родителя (не задан - текущий); - номер строки объекта (не задана - текущая. Но только если не задан объект) - (X1) номер колонки встраивания (от 0 ) - (x2) кол-во колонок - (Y2) кол-во занимаемых строк. Если не указано, то занимаются все строки объекта и его потомков. - =1 - использовать дерево объектов (по умолчанию - дерево экземпляров). Позиция начала и конца д.б. указаны в % Возможно указание размеров в процентах от размера области дерева в следующих сочетаниях (параметр = число_"%"): Y2 и X2 в этом случае трактуются как ПОЗИЦИИ конца (НЕ размер) Y1% Y2% X1% X2% Y1 Y2 X1% X2% Y1 Y2% X1% X2% Y1 Y2% X1 X2% Y1 Y2 X1 X2% (!!!) ИСПОЛЬЗОВАНИЕ главного меню во встраиваемых окнах недопустимо. При встаивании создается узел qwin(qwin,"child")=qqnump_окна-родителя Для окна-родителя создается узел qwin(qwin,"parent",qqnump_потомка)="" Вызов (ОрenWindow) окнон-потомков можно вставить в действие по входу основного окна (!!!) обязательно после D qARM.wcre() и обязательно с установленным qqpar7=1. Можно вызывать и через D qARM.Wait("D qARM.OpenWindow(....)") Взаимодействие связанных окон можно делать через D qARM.WrWin. qqnumpT содержит qqnump окна с последним редактированием/позиционированием (для распознования в событиях главного меню и кнопок панели инструментов). Метод qARM.GetBqqnump - Получение qqnump базового окна (для текущего встроенного) Параметр constr. Если не задан, в окне строятся дерево объектов и экземпляров. constr="TPicEditForm" - рисовалка картинок. Пример использования - см. метод OpenPicEdit *********************************************************************************** Каждой новой экранной форме отображения присваивается номер окна (qqnump=0-49). Имя окна qwin="Q"_qqnump. Создается локальная среда отображения. Vo(qqnump) - параметры отображения (см. qARM.GetPar). Начальный набор при открытии создается в qSYS.CreVo. Vs(qqnump) - состояние отображения (см. qARM.SaveView или пояснение к системному объекту базы XViewStat). Vt(qqnump) - временные (рабочие) переменные Vt(qqnump,0)- признак наличия постоянных условий Vc(qqnump) - содержимое дерева экземпляров (см. qW.gForm) W(qqw) - массив значений понятий при редактировании объектов отображения. При смене отображения записывается в WS(" "_qqnump). См. методы qARM.crest, qARM.csav. Если перед вызовом существуют Vo("par"), Vs("par") то их узлы замещают соответствующие узлы из Vo(qqnump), Vs(qqnump). Используется для динамического изменения параметров. Например, Set Vo("par",-1,29)="200,400,0" - установка размеров окна (X129) Описание Vo, Vs см. Документация/Локальная среда Правило соответствия кодов понятий и значений узлов для Vo (где * последующие цифры в коде понятия). X1*, x1* - описания параметров отображения. Замещает Vo(qqnump,-1,*) X3*, x3* - описания параметров печати. Замещает Vo(qqnump,3,*) X5*, x5* - описания параметров объекта. Замещает Vo(qqnump,qqo,*) X7*, x7* - описания параметров ячейки. Замещает Vo(qqnump,qqo,0,y,x,*) Vo("par") переписывается в Vo(qqnump) после загрузки объектов отображения (см.метод qSYS.CreVo) Vs("par") переписывается в Vs(qqnump) после загрузки объектов отображения (см.метод qSYS.CreVo) Vs("par",1,qqo)=1 - зачеркивает объект Vs("par",1,qqo,qqw)=1 - зачеркивает понятие и предшествующую константу (если она есть) Vs("par",1,qqo,qqw_"*")=1 - зачеркивает строку с понятием qqw Vs("par",1,y,x)=1 - зачеркивает ячейку (???) Vs("par",1,qqo)=-1 - блокирует вывод объекта и всех его потомков Vs("par",1,qqo,N)=2 - зачеркивает строку N Vs("par",1,qqo,0)=-2 - зачеркивает все строки объекта, кроме первой . Vs("par",5) - модификатор структуры объектов отображения. Может содержать: Vs("par",5,qqo)=1 - не включать объект с кодом qqo (и все его потомки) в формируемое отображение; Vs("par",5,qqo,qqw)=1 - не включать ячейку понятия в формируемое отображение. Сопутствующая (предшествующая) ячейка константы не включается тоже. Vs("par",5,qqo,y)=1 - не включать строку (кроме 0 !!!) Vs("par",5,qqo,y,x)=1 - не включать ячейку строки Vs("par",5,qqo,имя_строки)=1 - не включать строку (кроме 0 !!!) с заданным именем (cм. понятие X61) где y, x - номера строк и ячеек по описанию в отображении (!!!). Vs("par",5)=ObjRef - Объектная ссылка (список кодов объектов через запятую) для включаемых в формируемое отображение. Включаются только объекты из объектной ссылки и потомки последнего в ссылке (если не стоит -1). Vs("par",5,qqo) и Vs("par",5,qqo,qqw) учитываются. Примеры: S Vs("par",5)="3" - только объект 3 и все его потомки S Vs("par",5)="3,-1" - только объект 3 S Vs("par",5)="3,4" - объект 3, затем 4 и все его потомки Vs("par",2,qqo,qqc)=1 - разворачивает при начальном выводе свернутый но не выведенный экземпляр объекта. Vs("par",2",qqo)=1 - все экземпляры. Vs("par",2)=1 - все объекты и экземпляры В действии по входу или в любых других ситуациях перед перевыводом через qARM.wcre можно заполнять Vs(qqnump,"Estat"). !!!Если из модифицированного отображения вызывается его печать (Печать/текущее отображение), то печатная форма модифицируется тоже. Для вызова первого окна масив qARM содержит: qARM("Password") - введенный пароль (сразу уничтожается) qARM("ClientPath") - полная ссылка на директорию, откуда запущен qARM.exe qARM("Pars",1) = par1 (в qARM.ini) Должен содержать ссылку на файл документации по приложению qARM("Pars",2) = par2 - код отображения. В этом случае при входе вводится только пароль qARM("Pars",3) = par3 - зарезервирован (пока не используется) qARM("Pars",4-9) = par4-9 - свободны - могут использоваться приложением par1 и далее должны указываться пустыми, если задан parN В массив qwin добавляется узел: qwin(qwin,"GloWRef")=<коды отображений через запятую> (GloWRef - Global Window Reference - глобальная оконная ссылка) 
+• method Print(viewpr As %String, Arg2 As %String, X130 As %Library.String, NoWind As %Library.String) returns %String 
+Печать отображения viewpr. Если Arg2=1 или режим администратора, вызывается меню для приемника печатной формы. X130 - набор параметров печати - не указан, используется заданный по умолчанию NoWin - печать в текущем контексте (не создается отображение с qqnump="P") 
+
+• method ProjVerNotOlder(Arg1 As %Library.String = 0, Arg2 As %Library.String = 0, Arg3 As %Library.String = 0, Arg4 As %Library.String = 0) returns nothing. 
+Возвращает 1, если версия qARMProj.ocx указанная или новее. (Если узла qARM("Ver","qARMProj1.ocx") нет (вызов из GManager), возвр. 1) 
+
+• method Question(question As %String, yes As %String, qqpar3 As %String, qqpar4 As %String, type As %Library.String = 3, tv As %Library.String, fontsize As %Library.String) returns nothing. 
+Запрос ответа на вопрос. Ответ немодален. произойдет по событию question - текст вопроса. yes - вариант умолчания (1-да, 0-нет). qqpar3=qxecute0,qqpar4=qxecute1 - действия по вопросам Нет/Да. type - тип 0 - "OK", 1 - "OK","Cancel", 2 - "Yes","No","Cancel"; 3 - "Yes","No" (по умолчанию) tv= - вид 0 - Warning, 1 - Error, 2 - Information, 3 - Confirmation, 4 - Custom; fontsize - относительное изменение размеров шрифта (+ увеличение, - умменьшение). Например, +2 - увеличить на 2 (пикселя?) относительно текущего фонта по умолчанию. Использована "ShowMessagePos" (описание см. метод ..Message) 
+
+• method QuestionM(question As %Library.String, yes As %Library.String, qqpar3 As %Library.String, qqpar4 As %Library.String, qqpar5 As %Library.String, qqpar6 As %Library.String, qqpar7 As %Library.String, qqpar8 As %Library.String) returns nothing. 
+Вопрос через меню (аналог Question) Добавлена возможность множественных выборов qustion - тексты выборов (через ~) qqpar3 - действие по Отказ qqpar4-qqpar8 - действия по выборам 
+
+• method ReadClientFile(file As %Library.String, size As %Library.String, var As %Library.String, erract As %Library.String) returns nothing. 
+Чтение файла на стороне клиента в массив. file - имя файла size - длина; 0 - весь файл; -1 - построчно текстовый файл var - имя массива erract - действие при ошибке открытия файла 
+
+• method RecCor(qObj As %String, qqccor As %String, cdtu As %String = 1) returns %String 
+Корректировать экземпляр объекта. Возвращает 1 если коррекция успешна. cdtu - разрешить изменение даты времени коррекции 
+
+• method RecDel(qOref As %String, con As %String) returns %String 
+Удалить объект по объектной ссылке. 
+
+• method RecDelOref(qOref As %String, Arg2 As %String = 0) returns %String 
+Удаление из дерева экземпляров на экране и в массиве Vc(qqnump) поддерева qOref. Если Arg2=1 - то и из базы. После удаления производится позиционирование или перевывод. 
+
+• method RecDelRel(qOref As %String, con As %String, NoReFind As %Library.String) returns %String 
+Удаление перечня релевантных текущего (!!!) объекта qOref - задавать НЕ рекомендуется. Реально это qqci ( см. описание массива Vc). По умолчанию используется текущее положение в дереве экземпляров con - НЕ задавать. Исползуется в методе для продолжения после вопросов. NoReFind=1 - вне зависимости от включеннго режима уточнения, иначе удаление допускается только в режиме уточнения 
+
+• method RecIns(qObjNew As %Library.String, qOref As %Library.String, cont As %Library.String, qqNL As %Library.String, Before As %Library.String) returns nothing. 
+Вставить новый экземпляр объекта Arg1 после текущего. Возвращает 1 если ввод успешен. qqNL=1 - запустить ввод, если qqc с пробелом (используется для виртуальных) Before=1 - вставить перед текущим Если для объекта указано Подтверждение ввода, то задается вопрос о вставке Перед/После. Используется qW.rInc. Вставка - сдвиг в базе всех экземпляров поддрева - может работать весьма долго. 
+
+• method RecNew(qObjNew As %String, qOref As %String, cont As %String, qqNL As %Library.String) returns %String 
+Новый экземпляр объекта Arg1. Возвращает 1 если ввод успешен. qqNL=1 - запустить ввод, если qqc с пробелом (используется для виртуальных) 
+
+• method RecNewD(qqo As %String, qqc As %String, Arg1 As %Library.String, Arg2 As %Library.String) returns nothing. 
+Умолчания для понятий экземпляра qqc объекта qqo. qqwchg - текущеее. Заполняется массив W(qqw) и изменяется qqwchg. Выполняется действие перед вводом, коррекцией. Производится коррекция и qqwchg сбрасывается. 
+
+• method RecNewP(qqo As %String, qqci As %String, qqc As %String, refr As %String) returns nothing. 
+Порождение автоматически порождаемых потомков экземпляра объекта. refr=1 - не обновлять локальный массив содержимого дерева (qqci в этом случае не нужен). 
+
+• method RecObj(Arg1 As %String, Arg2 As %String) returns %String 
+Выдает имя объекта Arg1. Если Arg2=1, имя выдается если необходмо подтверждение операции ввода, удаления. 
+
+• method RecPost(qqt As %Library.String, qqo As %Library.String) returns nothing. 
+
+• method RecRaz() returns nothing. 
+Вызов развертки для понятия только что отредактированной ячейки. 
+
+• method RecRel(Arg1 As %String, qOref As %String, Arg2 As %Library.String) returns %String 
+Включение/исключение (Arg1=+/-) экземпляра в перечень релевантных. Arg1=0 - удаление перечня релевантных. Arg1=1 - переключение режима выбор/уточнение. qOref - индекс в Vc(qqnump) 
+
+• method RecRelAll(Arg1 As %Library.String) returns nothing. 
+Включить в релевантные все экземпляры Arg1=0 (или не задан) все экземпляры текущего объекта Arg1=1 - все видимые на экране (вместе с потомками) Arg1=2 - переключение все/сброс по левой кнопке 
+
+• method RecRev() returns nothing. 
+Откат. Восстановление для текущей записи измененных понятий из базы. 
+
+• method RecTmp(qqver As %Library.String, qObj As %Library.String, Arg1 As %Library.String) returns nothing. 
+Создание копии для темпорального поддерева Заменяетсся текущий qqc и $$$ID. Подменяются коды экземпляров в текущем поддереве. qObj - текущий объект 
+
+• method RecVer(qqt As %String, qObj As %String) returns %String 
+Проверка перед вводом/коррекцией/удалением (qqt=1/2/3). 
+
+• method RecVerNoDef(qqo As %Library.String) returns nothing. 
+проверка на обязательность непустых значений 
+
+• method RecVerOp(qqo As %Library.String, qqt As %Library.String) returns nothing. 
+
+• method RedTest(qqo As %Library.String, qqy As %Library.String, qqx As %Library.String) returns nothing. 
+Проверка возможности редактирования ячейки 
+
+• method ResetSrt() returns nothing. 
+Сброс сортировки 
+
+• method RestView(query As %String) returns nothing. 
+Восстановление состояния отображения (если query=1) 
+
+• method RestView8() returns nothing. 
+Восстановление сохраненного поискового образа 
+
+• method RestoreDirTree(nod As %Library.String, dir As %Library.String) returns %Library.String 
+Используется при восстановлении дерева каталогов с файлами, считанного с помощью qARM.wM("-qARM","ReadDirTree",...) 
+
+• method SRColWidth(Op As %Library.String, mas As %Library.String, index As %Library.String, wcre As %Library.String) returns nothing. 
+
+• method SaveToClipbrd() returns nothing. 
+Копирование текущего поддерева в буфер обмена см ..TestPaste 
+
+• method SaveView(qqpar1 As %String, qqmas As %String, qviewnext As %String) returns nothing. 
+Сохранить состояние текущего отображения. Если qqpar1=1, то сохраняется и положение в базе. qqmas - ссылка на массив для сохранения состояния. Если задан, то туда сохраняется все (включая $$$CurObj). qviewnext - новое (вызываемое) отображение (для печати через WEBLINK) Если массив не задан, то состояниие сохраняется в объект XObjStat ^Q("V"_кодотобр_" "_кодпользователя,"XObjStat") Объект для хранения состояния отображения (массив Vs). Описание узлов поддерева состояния: 1 - зачеркнутые объекты код_объекта = 1 - зачеркнут 2, - свернутые в дереве экземпляров (!!!) объекты код_объекта = 1 - свернут в дереве экземпляров 3, - свернутые объекты код_объекта = 0/1 (развернут/свернут) 4, - раскрытые (по понятиям) объекты код_объекта = 0/1 (закрыта/раскрыта) 7 - активность объектов (если узел не существует, то все объекты активны). Используется при фиксации - активные фиксируются = код_объекта_вершины_дерева_фиксации код_объекта = 1 активный объект 8 - дерево поиска код_объекта код_понятия = поисковый_образ 12 - аналитические срезы = код_объекта_" "_код_понятия - главная анаитика (сейчас не используется) код_объекта код_понятия 1 = название 2 = выражение относительно Z для вычисления среза характеристики. если не задано, значение понятия 3 = если "A", то срез 4 = если "D"_N, то характеристика (вычисляются 6-9) 5 = Num (кол-во) 6 = Sum 7 = Min 8 = Max 9 = Mid 13 - диаграмма. Узлы 0, 1 используются для определения серий диаграммы (вывода значений нескольких характеристик). 0 код_объекта_" "_код_понятия_" "_(5-9) = номер_серии _Y(1-N) 1 номер_серии_Y = код_объекта_" "_код_понятия_" "_(5-9) Узлы 2,3 используются в варианте нескольких (пока двух) аналитик. При построении диаграммы в это случае учитывается только Y1. В качестве серии в этом случае используются значения второй аналитики. 2 код_объекта_" "_код_понятия = номер_аналитики 3 номер_аналитики = код_объекта_" "_код_понятия "P" = порог включения точки в диаграмму (процент необходимого количества значений в выборке относительно их общего значения "M" = 1 - масштабирование нормированием = 2 - масштабирование взвешиванием "S" = 1 - сортировать по серии 1 "R" - приемник (диаграммы 0 - CFX,1 - VRML, таблицы 2-IE, 3 - Word, 4 - Excel) Следующие узлы хранят состояние управляющих переменных.(макры в %qWORD.INC) "ReFind" - режим поиска 0/1 - Выбор/уточнение (qqfls) "CurObj" - текущий объект "Relind" - индекс перечня релевантных (qqrn) "RelNum" - Количество (сейчас уже просто наличие релевантных) "CondFind" - Строка условий поиска (qqydrs) "ID" - текущий код экземпляра (qqc) "GloRef" - Текущая глобальная ссылка для дерева 99 - наборы параметров текущего отображения "Pic"=1 - вывод картинок "Find"=0/1 - поиск(отметка) экземпляров/поддерева 1 =1 - учитывать одинаковые понятия в разных объектах 2 - максимальное количество экземпляров (если не задано - ищутся все) "Anal" =0/1 - аналитика по значениям/словам значений 0 =1 - учет пустых значений 
+
+• method SaveView8() returns nothing. 
+Сохранение состояния поискового образа 
+
+• method SetBLOB(Glb As %String, Node As %String, Arg3 As %String, Sp As %String) returns %Boolean 
+
+• method SetPar(qqpar As %String, qqval As %String, nump As %String, qqObj As %String, y As %String, x As %String) returns %Library.String 
+Запись параметров отображения в локальный массив. 
+
+• method SetZTMP(qObj As %Library.String, qqc As %Library.String, qqw As %Library.String, Z As %Library.String) returns nothing. 
+Установить значение (Z) для ZTMP*-понятия (qqw) объекта (qObj). Z="" - удаление из перечня релевантных 
+
+• method Setdpwin(X180 As %Library.String, X188 As %Library.String, X129o17 As %Library.String) returns nothing. 
+Динамическая переустановка: X180=1\0 - НЕ выводить\выводить колонку релевантных X188=1\0 - показывать/НЕ показывать заголовки колонок X129o17 - вариант скролирования (0 - запрет,1-г, 2-в, 3- г+в, 4-постоянно г, 5 -пост. в, 6 - пост. г+в) !!! после переустановки скроллирования необходим перевывод. 
+
+• method Sort(qqo As %Library.String, qqw As %Library.String, Value As %Library.String, Arg1 As %Library.String, Beg As %Library.String, Nowr As %Library.String, qqc0 As %Library.String, SortV As %Library.String, SortVn As %Library.String, New As %Library.String) returns nothing. 
+Включение невидимой сортировки. qqo - код объекта сортировки qqw - код понятия сортировки Value - ТОЛЬКО при наличии релевантных и режима уточнение. Позволяет сделать сортировку по значениям выражения (возможно использовать qqo,qqc). Код понятия в этом случае может задаваться любой. Arg1=1 сделать объект сортировки текущим. Beg=1 встать в начало (по включенной сортировке) Nowr - не выводить на экран. Используется при задании метода в действии по входу в печатную форму. !!! Для использования в печатных формах (если печать релевантных) лучше писать S Vs(qqnump,"ReFind)=1 D qARM.Sort ... !!! т. е. принудительно установить режим уточнения. далее для построение локального словаря (см. метод qW.CreSortV) qqc0 - текущая общая часть кода экземпляра (по умолчанию - зона фиксации) SortV - индекс словаря (переносится в Vs(qqnump,"SortV") ). По умолчанию - ссылка на текущий перечень релевантных SortVn =1 - НЕ создавать ссылки на экземпляры( переносятся в Vs(qqnump,"SortVn") ). Будут использоваться ссылки словаря понятия qqw New=1 - обновить словарь. Иначе, если он уже есть, то не строится. Например, для организации временного словаря по зоне фиксации: D qARM.Sort("S15","s113",,,,,,"",,1) 
+
+• method SplitterBar() returns nothing. 
+Вроде не нужен 
+
+• method StartEdit(X731 As %Library.String, x730 As %Library.String, X73 As %Library.String) returns nothing. 
+Инициирование редактирования с заданными параметрами. X731 - вариант редактирования (см.понятие X731); x730 - тип развертки X73 - параметры развертки Метод предназначен для динамического формирования сложных вариантов развертки. !!!Может вызываться из развертки-действия или правила проверки. Для правила проверки необходимо исклбючить вариант зацикливания. 
+
+• method StartEditT1() returns %String 
+Редактирование граф 1-9 дерева объектов. 
+
+• method StartEditT2(X731 As %Library.String, x730 As %Library.String, X73 As %Library.String) returns %String 
+qqbut=3 - принудительный вход в редактеривоние вне заввисимости от описанного стиля Всегда вызывается как функция 
+
+• method T1ColHButton(qqpar1 As %String) returns nothing. 
+События кнопок заголовков колонок дерева объектов. qqpar1- номер ряда (от 0 ). 
+
+• method T2ColHButton(qqpar1 As %String, qqws As %Library.String, Find As %Library.String) returns nothing. 
+События кнопок заголовков колонок дерева экземпляров (сортировка). qqpar1- номер ряда (от 0 ). qqpar1=-1 - сброс сортировки Для включения из программы. Find="" ;просто включить Find ="*" - включить в режиме поиска по шаблону. @Dol 31.08.06 Сообщения о причине невозможности сортировки выводятся только в режиме Администратор 
+
+• method T2ColHButtonClr(Arg1 As %Library.String) returns nothing. 
+Сброс кнопок сортировки 
+• method T2ColHButtonDo(qqw As %Library.String, but As %Library.String) returns nothing. 
+Действие по сортировке для ячейки или колонки (в заголовке колонки) 
+
+• method TFormOnClose(Sender As %String, qqpar2 As %String, Arg1 As %Library.String) returns %String 
+Закрытие окон Если qqpar2, то идет цепочка закрытия окна отображения (ответы на вопросы). Arg1=1 - закрытие при потере фокуса 
+
+• method TMenuItemOnClick(Sender As %String) returns %Library.String 
+Отработка выборов меню. 
+
+• method TToolButtonOnClick(Sender As %String, Button As %Integer) returns %String 
+
+• method TestPaste(TextMsg As %Library.String) returns %Library.String 
+Проверка и восстановление из буфера обмена см. ..SaveToCipbrd 
+
+• method TextEdit(Text As %String, Xec As %String, Capt As %String, Width As %String) returns nothing. 
+
+• method ToolbarCreateButton(ToolBar As %Library.String, Name As %Library.String = "", Caption As %Library.String = "", Visible As %Library.String = 0, Enabled As %Library.String = 0, OnClick As %Library.String = 0, ImageIndex As %Library.String = -1, Hint As %Library.String = "", ShowHint As %Library.String = 0, Style As %Library.String = 0, Width As %Library.String = "") returns %Library.String 
+Создание кнопки на тулбаре. D qARM.ToolbarCreateButton(имя_тулбара,параметр1,параметр2,..) Параметры кнопки: № Параметр Значение по умолчанию 1 Name "" 2 Caption "" 3 Visible 0 4 Enabled 0 5 OnClick 0 6 ImageIndex default 7 Hint "" 8 ShowHint 0 9 Style 0 (Default) 10 Width default 
+
+• method UserClass() returns nothing. 
+Инициализация пользовательских классов 
+
+• method Util(Arg1 As %Library.String, Arg2 As %Library.String, Arg3 As %Library.String, Arg4 As %Library.String) returns %Library.String 
+Служебные функции Par1=номер функции 
+
+• method VLoadData(Node As %Library.String, ByRef Subnode As %Library.String, ByRef out0 As %Library.String, addCRLF As %Library.String) returns %Library.Integer 
+@dima 02.02.07 Вызывается клиентом после d ..wM("-qARM","FileFastSave",Identifier,filename). Вызов напрямую - невозможен. Параметры: Node - имя массива с данными; Subnode - имя предыдущего (уже обработанного) подузла. Если равно "", то выход вывод продолжается до конца массива. Вызывается клиентом, пока не вернет 1 Возвращает содержимое для файла в параметрах out0 по ссылке. 
+
+• method Value(ArgV1 As %String, ArgV2 As %String) returns %String 
+Вычисление выражения или выполнение по Xecute (если Arg2="X") В варианте Xecute, в переменную XQend записывается возвращаемое значение. 
+
+• method Valueer() returns nothing. 
+
+• method VerCall(view As %String) returns %String 
+Возвращает через пробел допустимые для вызываемого отображения qqc и объект. 
+
+• method ViEdit() returns nothing. 
+Визуализация режима редактирования. 
+
+• method Virt(Arg1 As %Library.String) returns nothing. 
+Заполнение Vs(qqnump,"Virt",qqo) для текущей позиции в дереве экземпляров Arg1=1 - по массиву Vc Arg2=0 - по объектной ссылке 
+
+• method Wait(Arg1 As %String, Arg2 As %Library.String, Arg3 As %Library.String) returns nothing. 
+Если Arg3 не задан: Выполнить Arg1 после завершения текущего события. Используется для выполнения действия вне рамок текущего события (например, удаление/перевывод узлов дерева экземпляров из события дерева экземпляров: D qARM.Wait("D qARM.wcre()" ) Если Arg3 задан: Выполнить действие (длительное), во время которого пользователю демонстрируется анимационная заставка (часы). Arg3 - текст окна заставки. Arg2 - оставлен для совместимости. 
+
+• method WrWin(qqpar1 As %String, qqpar2 As %String, qqpar3 As %String, qqpar4 As %String) returns %String 
+вывод в окно - потомок. Параметры: - qqpar1 - qqnump потомка (если пусто, то потомок - определяется автоматически по переменной qqParent). - qqpar2 - 1 - перенести фокус на потомка. - qqpar3 - список кодов переносимых и выводимых понятий (qqwchg корректируется). Значения должны быть в массиве W. Автоматически вызывается коррекция. - qqpar4 - имя qWORD - метода (например, luse, wcre и т.п.), выполняемой в контексте окна-потомка. признак модификации базы W("Zbasmod") в методе может быть проанализирован через переменную basmod. 
+
+• method Xecute(%gXstr1 As %String, %gXstr2 As %String) returns %String 
+• method crst(qqpar1 As %String, qqpar2 As %String, Arg1 As %Library.String) returns nothing. 
+восстановить текущее состояние из WS qqpar1=1 - сохранить контекст текущего окна ( аналог вызова ..csav() ) qqpar2 - qqnump восстанавливаемой экранной формы Arg1 =1 - восстановить и указатель окна - переменную qwin. 
+
+• method csav() returns nothing. 
+Сохранить текущее состояние экранной формы в WS. 
+
+• method mImpOp() returns nothing. 
+
+• method oneWin() returns nothing. 
+Действие по входу в отображение - если данное окно открыто, то установка на него фокуса 041007 sasha & pavel 
+
+• method qqtime(Arg1 As %String) returns %String 
+
+• method s112(qqstr As %String, qqtr As %String) returns %String 
+Вызов развертки.(только как функция) 
+• method wC(Cl As %String, Obj As %String, par1 As %String, par2 As %String, par3 As %String, par4 As %String, par5 As %String, par6 As %String, par7 As %String) returns nothing. 
+
+• method wG(Obj As %String, MC As %String, par1 As %String, par2 As %String, par3 As %String, par4 As %String, par5 As %String, par6 As %String, par7 As %String) returns nothing. 
+
+• method wM(Obj As %String, MC As %String, par1 As %String, par2 As %String, par3 As %String, par4 As %String, par5 As %String, par6 As %String, par7 As %String) returns nothing. 
+
+• method wMByf(x2 As %String, x3 As %String, par1 As %String, par2 As %String, qRES As %String = $G(qqRES), mas As %Library.String) returns nothing. 
+
+• method wMet() returns nothing. 
+Общая часть методов wC, wM, wP, wG 
+
+• method wP(Obj As %String, MC As %String, PV As %String, par1 As %String, par2 As %String, par3 As %String, par4 As %String, par5 As %String, par6 As %String, par7 As %String) returns nothing. 
+
+• method wTR(Arg1 As %String) returns %String 
+Преобразование в верхний регистр. 
+
+• method wbmp(Arg1 As %String, Arg2 As %String, Arg3 As %Library.String, Arg4 As %Library.String) returns nothing. 
+Создание и загрузка TBitMap Arg3=1 - для загрузки картинки в окно (см. qARM.OpenPic ). Arg4=1 - "глобальные" картинки 
+
+• method wbut(qqpar1 As %String, qqpar2 As %String, qqpar3 As %String) returns nothing. 
+установка кнопки заголовка qqpar1 =1 - объекты, 2 - экземпляры qqpar2 - номер ряда qqpar3 - состояние 
+
+• method wbuttb(butlst As %String, down As %String, en As %String, vi As %String) returns %String 
+Управление кнопками Тулбаров. butlst - номер кнопки (если больше нет параметров, возвращает номер пояснений) Одно из нижеследующих (butlst - список через пробел): down - 1/0 - нажата/отпущена en - 1/0 - доступна/недоступга vi - 1/0 - видима/невидима 
+
+• method wcelldpar(qqo As %Library.String, qqso As %Library.String, qiii As %Library.String, qqci As %Library.String) returns nothing. 
+Динамические параметры ячейки 
+
+• method wcellpic(qqo As %Library.String, qqso As %Library.String, qiii As %Library.String, qqci As %Library.String) returns nothing. 
+Вывод постоянных картинок 
+
+• method wcellsel(qqyold As %Library.String, qqxold As %Library.String, qqynew As %Library.String, qqxnew As %Library.String) returns nothing. 
+
+• method wcellttips(qqo As %Library.String, qqso As %Library.String, qiii As %Library.String, qqci As %Library.String) returns nothing. 
+Вывод всплывающих подсказок 
+
+• method wcre(Arg1 As %String, Arg2 As %Library.String, Nopos As %Library.String, opobj As %Library.String) returns nothing. 
+Создание дерева экземпляров обектов. После вывода, позиционирование на $$$CurObj с кодом экземпляра qqc Arg1,Arg2 - не используются Nopos=1 - не позиционироваться Для текущего экземпляра объекта (и всех предков) сохраняется состояние развернутости для непервого вызова ( Vc(qqnump) существует) Vs(qqnump,2) УНИЧТОЖАЕТСЯ ( кроме Vs(qqnump,2)=1 - раскрыть все) opobj=1 - сохранять состояние развернутости для текущего объекта (вне зависимости от экземпляра!!!) Состояние сохраняется методом qARM.Estat. Можно использовать свои варианты сохранения состояние. Но перед вызовом wcre необходимо выполнить Kill Vc(qqnump). В противном случае ( при наличии Vc(qqnump) ) создается Vs(qqnump,2... относительно состояния ТЕУЩЕГО экземпляра. Учитывается только Vs(qqnump,2)=1 - развернуть все. 
+
+• method wcrm(qqpar1 As %String, qqpar2 As %String, qqpar3 As %String, qqpar4 As %String, qqpar5 As %String, qqpar6 As %Library.String) returns nothing. 
+Создание пункта меню qqpar1 - номера пунктов (разделитель уровней _ ) qqpar2 = -1 - удаление, 0 или пусто - создание 1 - установка заданных параметров qqpar3 - название qqpar4 - активность, помеченность, .BMP-файл, разделитель ;, Hint mbBreak qqpar5 - возможность событий qqpar6 - картинка Для изменения из действия по меню - qqpar1=0 
+
+• method wcro(qqpar1 As %String) returns nothing. 
+Создание дерева объектов. qqpar1 - создание таблиц понятий: Vo(qqnump,qqo,11,qqw)=qqso_" "_qqx Vo(qqnump,qqo,10,num)=qqw num=1...N - порядковый номер и параметров колонок (Vo(qqnump,-1,9,col) 
+
+• method wcroCell(qObj As %String, y As %String, x As %String) returns %String 
+Содержимое ячейки дерева объектов 
+
+• method wdbl(str As %String) returns %String 
+Дублирование в строке "верхних" двойных кавычек ($C(147)). Необходим при передаче данных через протокол. (В нем они значимы). 
+
+• method wfoc(qqpar1 As %String, qqpar2 As %String, qqpar3 As %String, qqpar4 As %String, selpos As %Library.String) returns nothing. 
+вход в редактирование дерево (qqpar1), позицию (y -qqpar2, x - qqpar3) qqpar4 - поиск по индексу 
+
+• method wfot(qqpar1 As %String, Arg2 As %String) returns nothing. 
+Сделать неактивными все объекты кроме поддерева объекта qqpar1 qqpar1 не задан - все активны qqpar1=-1 - неактивны все объекты из Vs(qqnump,7) qqpar1=-2 - все объекты, не входящие в поисковый образ qqpar1=-3 - восстановить все объекты, не входящие в поисковый образ Arg2=1- только переформирование Vs(qqnump,7) 
+
+• method wgre(Arg1 As %Library.String) returns nothing. 
+Переинициализация граф дерева экземпляров. 
+
+• method wipa() returns nothing. 
+Инициализация дерева образцов (T3). 
+
+• method wpic(qqpar1 As %String) returns nothing. 
+Вывод/удаление картинок (qqpar1=1/0) в дереве экземпляров. 
+
+• method wpoe(qqpar1 As %String, Beg As %Library.String, NoSelCel As %Library.String, Capt As %Library.String, curobj As %Library.String, curqqc As %Library.String) returns %String 
+Позиционирование(отметка) и Вывод заголовка дерева Экземпляров Beg=1 - выставить текущую строку в начало экрана NoSelCel - не переустанавливать отметку текущей ячейки Capt=1 - вывести заголовки граф и окна (используется, если нет экземпляров) curobj, curqqc - позиционирование на заданный объект с заданным кодом экземпляра (curqqc="" - первый) 
+
+• method wpot(qqpar1 As %String, qqpar2 As %String) returns nothing. 
+Раскрытие/закрытие (qqpar2=1\0) папки понятий объекта qqpar1 если не задан qqpar2, то переключение если qqpar1="", то все узлы (qqpar2="" - начальная установка ???qqpar3 - изменение уровня 
+
+• method wqqotree(qOref As %Library.String, qqcold As %Library.String, qqcnew As %Library.String, qX54 As %Library.String, Arg1 As %Library.String, qqop As %Library.String, qqcp As %Library.String, Nobut As %Library.String) returns nothing. 
+Перевывод/замещение поддерева на экране qOref - указатель в Vc, не задан - текущая позиция на экране Может быть вариант: qOref - код объекта qqcold - код экземпляра (обязан быть задан, хотя бы пустым). Пуст - первый экземпляр объекта на экране !!!Если qqcold="*" - ДОБАВЛЕНИЕ в конец объекта qOref НОВОГО экземпляра qqcnew. qqcnew - новый кодэкземпляраю Не задан - просто перевывод qX54=1 - объект выводится как развернутый (важно в варианте X54=2) Arg1=1 - не позиционироваться По умолчанию позиционирование на первую первыводиую строку (если не указан qqop) qqop - объект позиционирования в рамках перевыводимого дерева. qqcp - код его экземляра (не указан - первый) 
+
+• method wrot(qqpar1 As %String, qqpar2 As %String) returns nothing. 
+свернуть/развернуть (qqpar2=1\0) узел объекта qqpar1 если не задан qqpar2, то переключение если qqpar1="", то все объекты (qqpar2="" - начальная установка 
+
+• method wwde() returns nothing. 
+Вывод признака наличия поискового образа и аналитик. 
+
+• method wwrefr(qqo As %Library.String, qqc As %Library.String, rel As %Library.String) returns nothing. 
+Перевывод (обновление). Не изменяется свернутость/зачеркнутость. Перевыводятся все видимые на экране строки заданных экземпляров объектов (и их картинок). Если заданы qqo и qqc - конкретный экземпляр или все экземпляры (qqc="") ; в противном случае обновляется весь экран. Только строки вершины - qqo=-1 rel=1 - перевывести ТОЛЬКО отметку релевантных rel=-1 - НЕ перевыводить (и не пересчитывать по релевантным) отметку релевантных Отметка релевантных ПЕРЕСЧИТЫВАЕТСЯ по состоянию перечня релевантных. Возвращает 1, если что-либо перевыведено. Метод ЗАВЕРШАЕТ операцию коррекции НО не завершает текущее РЕДАКТИРОВАНИЕ. В правиле проверки ячейки использовать осторожно (ТЕКУЩЕЕ редактирование в этом случае НЕ завершено - пропадет текущее значение). 
+
+• method wwww(qqpar1 As %String, Arg1 As %String, p31 As %Library.String, curobj As %Library.String, qqc As %Library.String, qqnumpo As %Library.String) returns nothing. 
+Выво в дерево экземпляров значений понятий текущего объекта. 
+   qqpar1 - список кодов понятий через пробел). * - вывести все обобщения и выражения Для вывода выражения (или константы) в строке S колонке K дерева экземпляров текущего объекта используется псевдопонятие ZsScK. Например, Zs0c0. 
+     Arg1=1 - не выдавать сообщение об отсутствии выводимого понятия в отображении. !!!(устарело) Если задан p31 - тип ввода с заменой варианта редактирования (x531).Цвета символа и фона на заданный в описании отображения (X152, X177 должны быть цвета). curobj - код объекта, если вывод во внетекущий, qqc - код его экземпляра. Если объект выше - код необязателен, если ниже, и qqc не указан - первый встреченный. Для вывода в другое окно (ПОКА ТОЛЬКО ОБОБЩЕНИЙ): qqnumpo - номер окна. curobj и qqc д.б. заданы. 
+
+• method wwwwFCBUT(Arg1 As %Library.String, qqci0 As %Library.String, qqo As %Library.String, qqso As %Library.String, qiii As %Library.String) returns nothing. 
+Разрисовка встроенных элементов Если задан qqo - перерисовка конкретного элемента (нужна для перевывода кнопок панели инструментов в qARM.wwww ) 
+
+• method wwwwZXXadd() returns nothing. 
+
+• method zSet(Arg1 As %Library.String) returns %Library.String 
+
+
+
