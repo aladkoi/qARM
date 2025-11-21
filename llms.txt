@@ -1,0 +1,1948 @@
+# qARM/qWORD Library Documentation
+
+> ObjectScript library for data management and UI operations in InterSystems Caché/IRIS
+
+## Overview
+
+qARM (qWORD) is a comprehensive ObjectScript library providing:
+
+- **Data Management**: CRUD operations, search, filtering, analytics
+- **UI Components**: Window management, forms, dialogs, trees
+- **Export/Import**: CSV, XML, file operations
+- **Utilities**: Sorting, validation, transformations
+
+## Core Classes
+
+### %Library.qWORD
+Main class for data operations and value manipulation.
+
+### %Library.TqARM
+UI and window management class with 200+ methods.
+
+## Method Categories
+
+### Window Management
+
+#### `OpenWindow(qqpar1:%String,qqpar2:%String,qqpar3:%String,qqpar4:%String,qqpar5:%String,qqpar6:%String,qqpar7:%String,nsp:%Library.String,child:%Library.String,constr:%Library.String,Centr:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+S:$G(constr)="" constr="TFormTree" ;@Dima&Dol 14.03.07
+ D ..wP("-qARM","Cursor",-11)
+ S qqParent=" "_$G(qqnump)_" "_$G(qqw) S:$TR(qqParent," ")="" qqParent="" ;??? если из запроса, то qqnump="Q"; см LoadView - в Zparent - реальное
+ N qqWS,qviewpre S qqWS=" "_$G(qqnump),qviewpre=$G(qview) I qqWS'=" " D ..csav() ;сохрним в WS текущее состояние
+ N qqoView
+ S qqoView=$S($g(qqpar6)'[$C(1):"XView",1:$P($g(qqpar6),$C(1))) S:$g(qqpar6)[$C(1) qqpar6=$P($g(qqpar6),$C(1),2,255) ;Маслова 06.08.2010
+ D:$G(nsp)'=""
+ .ZN nsp X "S qUSER=##class(qUSER).%New()"
+ .D qSYS.BaseIni() ;смена NameSpace
+ K W,N ;,qqdbl
+ S qql=1 ;слой
+ I $G(qqpar2)="" D  ;поиск свободного окна (только если уже есть какое-либо окно);@Dol 21.07.09 100 окон
+ .F qqpar2=1:1:100 Q:'$D(qwin("Q"_qqpar2))
+ .Q:qqpar2<100  S qqpar2=$S('qqnump:1,qqnump=99:1,1:qqnump+1)
+ S qqnump=qqpar2
+ ;
+ S qqp4=$G(qqpar4),qqp5=$G(qqpar5) ;;$G(qqpar6)
+ ;sas 20090410
+ s qqp6=$S($G(qqpar6)'="":qqpar6,1:qqp6)
+OpenWinBeg ;
+ S (qqred,qqwchg)=""
+ S $$$ReFind=0,$$$RelNum=0,$$$Relind=0
+ ;
+ S qqc=""
+ S W("ZBtred")=''$P(qqp4," ",3)
+ ;I $G(qARM("Password"))'="" S qqp6=qARM("Password") S:$G(qARM("Pars",2))'="" qqp6=qARM("Pars",2)_" "_qqp6 S quser=$P(qqp6," ",2),qqp6=$P(qqp6," ") K qARM("Password") I $S(quser="":1,quser="#"&($D(^Q(1,"XUser"))<10):0,quser="U":0,1:'$D(^Q(1,"XUser",quser))) D ..Message("Незарегистрированный пользователь"),..wM("-qARM","Terminate") Q  ;par2 в qARM.INI может содержать код отображения, тогда вводится только пароль
+ /*@sas 20090410
+ I $G(qARM("Password"))'="" N error,qqp66 D  I $G(error) Q:$Q "" Q
+ .I $G(^Q(1,"XBase",0,"XBLg"))'="" X ^("XBLg") K:$G(error)'=0 qARM("Password") Q:$G(error)'=0  ;@dol 19.05.04
+ .S qqp6=qARM("Password") S:$P($G(qARM("Pars",2)),"~")'="" qqp6=$P(qARM("Pars",2),"~")_" "_qqp6 D  K qARM("Password")
+```
+
+---
+
+#### `CloseWindow(Arg1:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I $S($G(qqLastWin):0,1:Arg1=0)||('$D(qwin("Q"_Arg1))) Q:$Q 0 Q  ;нет окна или первое
+ i $P($G(Sender),".")="Q"_Arg1 d qARM.wM("Q"_Arg1,"EvClose") q  ; @Dima 20090715 Закрытие текущего окна будет произведено в другом событии
+ D ..csav() 
+ ;D:$D(qwin("Q"_Arg1,"Timer")) ..wM("Q"_Arg1_".Timer","Destroy") D qARM.wM("Q"_Arg1,"Destroy") K qwin("Q"_Arg1)
+ d Close50(Arg1)
+ Q:$Q 1 Q
+Close50(qqnump) D:$D(qwin("Q"_qqnump,"Timer")) ..wM("Q"_qqnump_".Timer","Destroy")
+ D:$D(qwin("Q"_qqnump,"OleD",1)) ..wM(qwin_".T1","VolOleDragDropDisable")
+ D:$D(qwin("Q"_qqnump,"OleD",2)) ..wM(qwin_".T2","VolOleDragDropDisable")
+ I $D(qwin("Q"_qqnump,"child"))  K qwin("Q"_qwin("Q"_qqnump,"child"),"parent",qqnump) ;@Dol 24.06.05
+ I $D(qwin("Q"_qqnump,"parent")) N qpp S qpp="" F  S qpp=$O(qwin("Q"_qqnump,"parent",qpp)) Q:qpp=""  D Close50(qpp) ;@Dol 24.06.05
+ D ..wM("Q"_qqnump,"Destroy") K qwin("Q"_qqnump) Q
+```
+
+---
+
+#### `OpenDialog(Sender:%String)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+$$$FEvent
+ D ..Value($G(qxecuted),"X")
+ Q ""
+```
+
+---
+
+#### `OpenWinDialog(Arg1:%String,Filter:%Library.String="",id:%Library.String="",de:%Library.String="",fn:%Library.String="",save:%Library.String,mode:%Library.String,dialog:%Library.String="")`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+S qxecuted=$G(Arg1)
+ n dlg,name s dlg=$S($G(save):"TqSaveDialog",1:"TqOpenDialog"),name=$S($G(save):"Save1",1:"Open1")
+ I '$D(qwin(dlg)) d ..wC(dlg,name) d:$G(save) ..wP(name,"Options.+",1) S qwin(dlg)=1 ; TDV 21.11.2005 - добавлен параметр mode
+ i $G(mode) d ..wP(name,"Options.-",6)
+ e  d ..wP(name,"Options.+",6)
+ d ..wP(,"Filter",Filter)
+ i id'="" d ..wP(,"InitialDir",id)
+ d ..wP(,"DefaultExt",de)
+ i fn'="" d ..wP(,"FileName",fn)
+ d ..wP(,"Title",dialog)
+ d ..wM(,"qExecute") Q:$Q "" Q
+```
+
+---
+
+#### `OpenFolderDialog(Arg1:%Library.String,Arg2:%Library.String,Arg3:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+S qxecuted=$G(Arg1)
+ I '$D(qwin("TFolderDialog")) D ..wC("TFolderDialog","OpenFolderD") S qwin("TFolderDialog")=1
+ i $G(Arg3)'="" d ..wP("OpenFolderD","FileList",Arg3)
+ D ..wM("OpenFolderD","Execute",Arg2)
+ Q:$Q "" Q
+```
+
+---
+
+### Data Operations
+
+#### `G(qqw As ****)`
+
+**Returns:** ` `
+
+Получить значение понятия qqpar1 для текущего qqc экземпляра объекта qqo.
+
+**Implementation:**
+
+```objectscript
+I qqw[":",$E(qqw)'="L",$E(qqw,1,3)'="@ZL" Q qW.Get(qqw) ;@Dol 25.03.06
+ Q:qqw="" "" N qqw1,qqwvvv,qqot,qqoo ;?????? S qqo=qqoo для некоторых? типов виртуальных
+ i $g(qqnump)="" n qqnump s qqnump=99
+ I $G(Vo(qqnump,qqo,41)),$E(qqw)?1N S qqwvvv=qqc N qqc S qqc=$P(qqwvvv,"~",$E(qqw,1,2)),qqw=$E(qqw,3,30000)
+ S qqoo=qqo,qqot=$S('$D(Vo(qqnump,qqo)):$S($G($$$Tree):2,1:+qARM.GetPar("x52",,qqo)),1:+$G(Vo(qqnump,qqo,2))),qqw1=$E(qqw) I '$G(qqGERROR) N $ET S $ET="S qqw=$G(qqw)_"" ""_$TR($ZE,""<>"") S:$ZE'[""CLASS REC"" $EC="""" Q:$Q qqw Q" ;@Dol 24.08.09 qqGERROR=1 - НЕ подавлять ошибку
+ S:qqot=9 qqot=0
+ I $E(qqo)="v" N qqo S qqo=$E(qqoo,3,255)
+ I $G($$$Tree),$S($D(qqref):$P(qqref,"(")'="^Q"&($P(qqref,"(")'="^Qa"),1:$P($$$GloRef,"(")'="^Q"&($P($$$GloRef,"(")'="^Qa")) D  Q:qqw1'="T" qqwvvv Q:$Q $D(W(qqw)) Q  ;для потока
+ .I qqw1'="T" S qqwvvv=$G(@$S($D(qqref):qqref,1:$$$GloRef)@(qqo,qqc,qqw)) Q:qqw'="C"  Q:qqwvvv'=""  S qqwvvv="<"_qqc_">" Q
+ .K W(qqw) M W(qqw)=@$S($D(qqref):qqref,1:$$$GloRef)@(qqo,qqc,qqw)
+ I qqot=1 S qqot=$S($G($$$ObjRef(qqoo))="":qqoo,1:$P($$$ObjRef(qqoo),",",$L($$$ObjRef(qqoo),",")-1)) N qqo S qqo=$S($E(qqot)'="v":qqot,1:$E(qqot,3,255)),qqot=0 ;предыдущий объект для встроенного;@Dol 9.04.09 $S($G($$$ObjRef(qqoo))=""
+ I qqot>2,"Z@"'[qqw1,$S(qqw1="H":qqot=8,1:1) D  S:qARM.GetPar(741,,qqo,qqw) qqwvvv=$TR(qqwvvv," ","_") Q:$Q qqwvvv Q  ;???Q:qqw="C" qqc D ???Q:qqot=3 $G(W(qqw)) D  Q qqwvvv
+ .I qqot=8 N qqNS,qqNSN S qqNS=$ZU(5) D:'$D(Vo(qqnump,qqo,29)) qARM.GetPar(529,,qqo) S:'$D(Vt(qqnump,"mas",qqo,qqw)) Vt(qqnump,"mas",qqo,qqw)=qARM.GetPar("X753",,qqo,qqw) S Vo(qqnump,qqo,2)=0 ZN $S($P(Vo(qqnump,qqo,29)," ")="":qqNameSpace,1:$P(Vo(qqnump,qqo,29)," ")) S:Vt(qqnump,"mas",qqo,qqw)="" qqwvvv=$S($P(Vo(qqnump,qqo,29)," ",2)="":..G(qqw),1:..GG($P(Vo(qqnump,qqo,29)," ",2),qqw,qqc)) S:Vt(qqnump,"mas",qqo,qqw)'="" @("qqwvvv="_Vt(qqnump,"mas",qqo,qqw)) ZN qqNS S Vo(qqnump,qqo,2)=8 Q
+ .I qqot=6 S qqo=qqoo D  S:$G(qqWinDos) qqwvvv=(qW.windos(qqwvvv)) S:$G(Vt(qqnump,"mas",qqo,qqw,41)) qqwvvv=$TR(qqwvvv," ","_") S:$G(Vt(qqnump,"mas",qqo,qqw,42)) qqwvvv=$S(Vt(qqnump,"mas",qqo,qqw,42)<3:$ZCVT(qqwvvv,$S(Vt(qqnump,"mas",qqo,qqw,42)=1:"U",1:"L")),1:$ZCVT($E(qqwvvv),"U")_$ZCVT($E(qqwvvv,2,30000),"L")) S:$E(qqw)="x"&&(qqwvvv'="") qqwvvv=qW.GetWoc("C"_qqw,qqwvvv) Q  ; tdv 20110302 было qqwvvv=$G(^Q(1,"C"_qqw,qqwvvv)) ;@Dol 3.3.05 :$E(qqw)="x" - для отображений XXXXNV
+ ..S:'$D(qqWinDos) qqWinDos=+$G(^Q(1,"XBase",0,"XFVDos")) ;флаг перекодировки DOS->Win
+ ..I qqw="C" S qqwvvv=qqc Q
+ ..S:'$D(Vt(qqnump,"mas",qqo,qqw)) Vt(qqnump,"mas",qqo,qqw)=qARM.GetPar("X753",,qqo,qqw),Vt(qqnump,"mas",qqo,qqw,41)=qARM.GetPar("741",,qqo,qqw),Vt(qqnump,"mas",qqo,qqw,42)=qARM.GetPar("742",,qqo,qqw) I '$D(Vo(qqnump,qqo,33)) S Vo(qqnump,qqo,33)=qARM.GetPar("X533",,qqo) S:$E(Vo(qqnump,qqo,33),1,2)="@@" Vo(qqnump,qqo,33)=qARM.Value($E(Vo(qqnump,qqo,33),3,2555)) S:$E(Vo(qqnump,qqo,33))="@" Vo(qqnump,qqo,33)=$E(Vo(qqnump,qqo,33),2,2555),Vo(qqnump,qqo,33,1)="" ;если прямая ссылка
+ ..I qqoo'=qqo,Vo(qqnump,qqo,33)="" S qqo=qqoo S Vt(qqnump,"mas",qqo,qqw)=qARM.GetPar("X753",,qqo,qqw) S Vo(qqnump,qqo,33)=qARM.GetPar("X533",,qqo) S:$E(Vo(qqnump,qqo,33))="@" Vo(qqnump,qqo,33)=$E(Vo(qqnump,qqo,33),2,2555),Vo(qqnump,qqo,33,1)="" ;???Для синонима
+ ..I qqo=-1 S qqwvvv=$G(@(Vo(qqnump,qqo,33))@(qqw)) Q  ;спец.вариант для понятий вершины (для аналитики ^Qa(qql))
+ ..I qqw="CC" S qqwvvv=$G(@(Vo(qqnump,qqo,33))@(qqc)) Q
+ ..I $G(Vt(qqnump,"mas",qqo,qqw))="" D   Q  ;код понятия-индекс узла
+ ...I $E(qqw)="T" K W(qqw) M W(qqw)=@(Vo(qqnump,qqo,33))@(qqc,qqw) S qqwvvv="" Q  ;@dol 28.07.04
+ ...S qqwvvv=$G(@(Vo(qqnump,qqo,33))@(qqc,$S($E(qqw,1,2)="Cx":$E(qqw,2,255),qqw1'="X"||$G(Vo(qqnump,-1,993)):qqw,$G(Vo(qqnump))["XXXXNV":qqw,1:$E(qqw,2,255)))) ;05.03.11 X1993
+ ..I $L(Vt(qqnump,"mas",qqo,qqw)," ")=1,$E(Vt(qqnump,"mas",qqo,qqw))'="$" D  Q
+ ...I $E(qqw)="T" K W(qqw) M W(qqw)=@(Vo(qqnump,qqo,33))@(qqc,Vt(qqnump,"mas",qqo,qqw)) S qqwvvv="" Q  ;@dol 3.5.04
+ ...S qqwvvv=$G(@(Vo(qqnump,qqo,33))@(qqc,Vt(qqnump,"mas",qqo,qqw))) Q
+ ..I $E($P(Vt(qqnump,"mas",qqo,qqw)," ",2))="@" N Z S Z=$S($P(Vt(qqnump,"mas",qqo,qqw)," ")="":"",$P(Vt(qqnump,"mas",qqo,qqw)," ")="C":qqc,$P(Vt(qqnump,"mas",qqo,qqw)," ")="CC":$G(@Vo(qqnump,qqo,33)@(qqc)),1:$G(@Vo(qqnump,qqo,33)@(qqc,$P(Vt(qqnump,"mas",qqo,qqw)," ")))),@("qqwvvv="_$E($P(Vt(qqnump,"mas",qqo,qqw)," ",2,255),2,1000)) Q
+ ..;I Vt(qqnump,"mas",qqo,qqw)?1.n1" "1.e S:$G(W("C"))'=qqc W("CC")=$G(@(Vo(qqnump,qqo,33))@(qqc)),W("C")=qqc S qqwvvv=$P(W("CC"),$P(Vt(qqnump,"mas",qqo,qqw)," ",2,255),+Vt(qqnump,"mas",qqo,qqw)) Q  ;значение в узле через разделитель
+ ..I Vt(qqnump,"mas",qqo,qqw)?1.n1" "1.e S qqwvvv=$P(Vt(qqnump,"mas",qqo,qqw)," ",2,255) S:qqwvvv?1.N qqwvvv=$C(qqwvvv) S qqwvvv=$P($G(@(Vo(qqnump,qqo,33))@(qqc)),qqwvvv,+Vt(qqnump,"mas",qqo,qqw)) Q  ;значение в узле через разделитель
+ ..S @("qqwvvv="_Vt(qqnump,"mas",qqo,qqw)) ;произвольное выражение
+```
+
+---
+
+#### `RecNew(qObjNew:%String,qOref:%String,cont:%String,qqNL:%Library.String,NoRed)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+I '$G(W("ZBtred")),'$G(NoRed),'$G(cont) D ..Message("Не установлен режим ввода",,,$G(qqXBMesTime)) Q:$Q "" Q  ;@Dol 03.11.09 '$G(NoRed),'$G(cont)
+ N qqco,qqci1,qqci2,qnumber,qObj,qqo,qqpos,qrefr,qqcold,qqq,qX5310,qX5311
+ ;I '$G(cont),$G(qObjNew)=""||(qObjNew=$G($$$CurObj)),$G($$$CurObj)'="",$G(Vo(qqnump,$$$CurObj,2))=1 F  S Vc(qqnump)=$E(Vc(qqnump),1,$L(Vc(qqnump))-2) I $G(Vo(qqnump,Vc(qqnump,Vc(qqnump),0),2))'=1 S $$$CurObj=Vc(qqnump,Vc(qqnump),0) Q  ;@Dol 17.06.05 перемещение по встроенным
+ I '$G(cont),$G(qObjNew)=""||(qObjNew=$G($$$CurObj)),$G($$$CurObj)'="",$G(Vo(qqnump,$$$CurObj,2))=1,$L(Vc(qqnump))>2 d  ;@Dol 21.02.08 ;@Dol 17.05.11 было '$G(con)
+ .N qqcii S qqcii=Vc(qqnump) S:0 qqoi=$$$CurObj F  S Vc(qqnump)=$E(Vc(qqnump),1,$L(Vc(qqnump))-2) Q:Vc(qqnump)=""  I $G(Vo(qqnump,Vc(qqnump,Vc(qqnump),0),2))'=1,Vc(qqnump,Vc(qqnump),0)=$E($$$CurObj,3,255) S $$$CurObj=Vc(qqnump,Vc(qqnump),0) Q  ;@Dol 17.06.05 перемещение по встроенным;;@Dol 17.05.11 ?qqoi
+ .I Vc(qqnump)="" S Vc(qqnump)=qqcii
+ ;qrefr=1 - необходим перевывод, иначе - вставка в текущее дерево и в Vc(qqnump) 
+ S:$G(qObjNew)="" qObjNew=$G($$$CurObj) I qObjNew=""!(qObjNew=-1) S qObjNew=$P($O(Vo(qqnump,-1,6,"")),",") I qObjNew="" D ..Message("Нет объектов в отображении") Q:$Q "" Q
+ S:$G(qOref)="" qOref=$G(Vc(qqnump),0)
+ S qqo=qObjNew ;!!!! чтобы работал GG
+ N qObj S qObj=$G(Vc(qqnump,qOref,0)),qqc=$G(Vc(qqnump,qOref)) ;текущий объект и код его экземпляра
+ S qnumber=..GetPar(520,,qObjNew) ;количество объектов
+ I $G(cont) G RecNewC:cont=1,RecNewC2:cont=2,RecNewC3
+ ;I ..GetPar(530,,qObjNew)  D ..Message("Запрещен ввод "_..RecObj(qObjNew)) Q ""
+ S qqq=..RecVerOp(qObjNew,1) I qqq D:$L(qqq)=1||($L($TR(qqq," "))'=1) ..Message($S($L(qqq)=1:"Запрещен ввод "_..RecObj(qObjNew),1:$E(qqq,2,32000)),,,$G(qqXBMesTime)) Q:$Q "" Q  ;@dol 6.11.03
+ I '$G(qqNL),$E(qqc,$L(qqc))=" ",$G(Vo(qqnump,-1,87))'=""||($G(Vo(qqnump,qObjNew,87))'="") D:0 ..Message("Ввод нового экземпляра бессмысленен без коррекции (пустого) текущего",,,$G(qqXBMesTime)) Q:$Q "" Q  ;игнорирование ввода для несуществующего объекта (x187)
+ I ..RecVer(1,qObjNew)'="" Q:$Q "" Q  ;правило проверки перед вводом
+ S qqci1=..RecObj(qObjNew,1) I qqci1'="" D  I qX5310,qqci2'="" D ..QuestionM("Ввести "_qqci1_"~Ввести "_..RecObj(qqci2)_$S('qX5311:"",1:"~-~Вставить "_qqci1_" после~Вставить перед"),1,"","D qARM.RecNew("""_qObjNew_""","""_qOref_""",1)","D qARM.RecNew("""_qqci2_""","""_qOref_""",1)","","D qARM.RecIns("""_qObjNew_""","""_qOref_""",1)","D qARM.RecIns("""_qObjNew_""","""_qOref_""",1,,1)") Q:$Q 1 Q  ;@Dol 20.07.07 иерархический ввод; 20.12.07 вставка
+ .S qX5310=..GetPar("X5310",,qObjNew) S:$E(qX5310)="@" @("qX5310="_$E(qX5310,2,30000)) ;иерархич ввод
+ .S qX5311=..GetPar("X5311",,qObjNew) S:$E(qX5311)="@" @("qX5311="_$E(qX5311,2,30000)) ;вставка
+ .I qX5310 N qqoii F qqoii=1:1 S qqci2=$P($G(Vo(qqnump,qObjNew,"xObj"))," ",qqoii) Q:qqci2=""  Q:'$G(Vo(qqnump,qqci2,2))  ;@Dol 11.11.08 поиск возможного иерархического ввовда
+ I (qnumber=1&(qObj=qObjNew)) D ..Message("Возможен только один экземпляр "_..RecObj(qObjNew),,,$G(qqXBMesTime)) Q:$Q "" Q
+ I qqci1'="" D ..QuestionM("Ввести "_qqci1_$S('qX5311:"",1:"~-~Вставить "_qqci1_" после~Вставить перед"),1,"","D qARM.RecNew("""_qObjNew_""","""_qOref_""",1)","","D qARM.RecIns("""_qObjNew_""","""_qOref_""",1)","D qARM.RecIns("""_qObjNew_""","""_qOref_""",1,,1)") Q:$Q 1 Q  ;@Dol 20.12.07 вставка
+RecNewC ;продолжение после вопроса
+ I $G(Vo(qqnump,qObjNew,2))=6 S:'$D(Vo(qqnump,qObjNew,33)) Vo(qqnump,qObjNew,33)=qARM.GetPar("X533",,qObjNew) S:$E(Vo(qqnump,qObjNew,33),1,2)="@@" Vo(qqnump,qObjNew,33)=..Value($E(Vo(qqnump,qObjNew,33),3,30000)) S qqci1=..GetPar(521,,qObjNew) S:qqci1 qqcold=qqc,qqc=$O(@Vo(qqnump,qObjNew,33)@(""),-1)+1 G:qqci1 RecNewC0 D ..OpenText($S(qObj'=qObjNew:0,1:$TR(qqc," ")),"D qARM.RecNew("""_qObjNew_""","""_qOref_""",3)","Код экземпляра") Q:$Q 1 Q  ;массив
+ I $G(Vo(qqnump,qObjNew,2))>2 D ..Message("Запрещен ввод для виртуального объекта",,,$G(qqXBMesTime)) Q:$Q 1 Q  ;блокировка для виртуальных ???
+ I $$$Tree S:$G($$$GloRef)="" $$$GloRef="^Q(1)" I qObj'=qObjNew S:qObj'="" $$$GloRef=$NA(@$$$GloRef@(qObj,qqc)),qqc=0 ;если вводится новый экземпляр нижнего уровня в дереве
+ I '$$$Tree,qObj=qObjNew S qqver=qW.rTmpVer(qObjNew,qqc) I qqver'="",..RecTmp(qqver,qObjNew,1)
+ I '$$$Tree,$G($$$ObjLqqc(qObjNew),255)=255,'..GetPar(521,,qObjNew) D ..OpenText($S(qObj'=qObjNew:0,1:$TR(qqc," ")),"D qARM.RecNew("""_qObjNew_""","""_qOref_""",2)","Код экземпляра") Q:$Q 1 Q 
+RecNewC0
+```
+
+---
+
+#### `RecCor(qObj:%String,qqccor:%String,cdtu:%String=1)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+I qqwchg="" Q:$Q "" Q 
+ S:$G(qObj)="" qObj=$$$CurObj I qObj=-1 S qqwchg="" Q:$Q 1 Q  ;ввод постоянных строк???
+ I $G(qqccor)="" S:$G(Vc(qqnump,Vc(qqnump)))'="" qqc=Vc(qqnump,Vc(qqnump)) I 1 ;@dol 14.02.03 при режиме "выводе пустых" qqc изменяется!!!
+ E  N qqc S qqc=qqccor
+ I ..qqtime(qObj) D RecCorEr Q:$Q "" Q 
+ I ..RecVer(2,qObj)'="" D RecCorEr Q:$Q "" Q  ;правило проверки перед коррекцией
+ I $G(Vo(qqnump,qObj,2))>2,Vo(qqnump,qObj,2)'=6 Q:$Q 1 Q  ;блокировка для виртуальных ???
+ N qqver,qKey,qKeyqqc0
+ S qKey=..GetPar(522,,qObj) ;список ключевых
+ I qKey'="" D  I qKey'="" Q:$Q "" Q  ;проверка на ключевые
+ .S qKeyqqc0="" I qKey[":" S qKeyqqc0=$P(qKey,":"),qKey=$P(qKey,":",2),qKeyqqc0=$S($D($$$ObjLqqc(qKeyqqc0)):$$$ObjLqqc(qKeyqqc0),1:qW.GG("CxObj","X50",qKeyqqc0)) S:qKeyqqc0'="" qKeyqqc0=$E(qqc,1,qKeyqqc0) ;@dol 20.09.04 ключевые относительно вершины
+ .N qqw,qi,qqz,qqz1,qKey0 S qqz="",qqz1=0,qKey0=qKey F qi=1:1:$L(qKey," ") S qqw=$P(qKey," ",qi) D:qqw'="" 
+ ..I " "_qqwchg_" "'[(" "_qqw_" ") S W(qqw)=qW.GG(qObj,qqw,qqc) I 1
+ ..E  S qqz1=1
+ ..S qqz=qqz_" "_$G(W(qqw))
+ .I 'qqz1,$TR(qqz," ")'="" S qKey="" Q  ;ключевые есть, но они не корректировались
+ .I $TR(qqz," ")="" D RecCorEr,..Message("Нет значений у ключевых понятий",,1) Q
+ .S qKey=qW.Key(qObj,qKey,"",,,,,,,,qKeyqqc0) Q:qKey=""  I qKey=qqc S qKey="" Q  ;нет или текущий
+ .S qqver=..GetPar(523,,qObj) ;отображение контроля (в текущей группе отображений !!!!) $P(qqver," ")=1 - запуск поиска
+ .;;;;;;;;;;;@sveta для варианта 4 - вызов отображения XXXCorKey
+ .I $P(qqver," ")'="" D
+ ..S:$P(qqver," ",2)<3 Vo("par",-1)=$S($P(qqver," ",2)=1:"-ПРОСМОТР",1:"-ВЫБОР из")_" совпадений для "_qqz
+ ..I '$P(qqver," ",2)!($P(qqver," ",2)=2) D  ;Выбор
+ ...S Vo("par",-1,64)="" ;обобщение для вывода заголовка
+ ...S Vo("par",-1,22)="" ;блокировка действия по выходу
+ ...S Vo("par",-1,73)=0 ;выбор по ДА
+ ...N qqdel S qqdel=1 F qi=1:1:$L(qKey0," ") S qqw=$P(qKey0," ",qi) I qqw'="",qW.GG(qObj,qqw,qqc)'="" S qqdel=0 Q  ;проверка допустимости удаления текущего экземпляра
+ ...S Vo("par",-1,72)=1_$S('qqdel:"",1:"  K qqFCor S qqwchg="""" D qW.rDel("""_qObj_""","""_qqc_"""),qARM.wcre()") ;переход по выбору (если выбор - уничтожить текущую)
+ ..I $P(qqver," ",2)=1 D  ;только просмотр
+ ...S Vo("par",-1,64)="" ;обобщение для вывода заголовка
+```
+
+---
+
+#### `RecDel(qOref:%String,con:%String,Arg3:%Library.String)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+I '$G(W("ZBtred")) D ..Message("Не установлен режим ввода",,,$G(qqXBMesTime)) Q:$Q "" Q
+ I $G(qOref)="",$G($$$CurObj)=-1 D ..Message("Не определен удаляемый объект",,,$G(qqXBMesTime)) Q:$Q "" Q  ;@dol
+ ;I '$G(con),$G($$$CurObj)'="",$G(Vo(qqnump,$$$CurObj,2))=1,$L(Vc(qqnump))>2 F  S Vc(qqnump)=$E(Vc(qqnump),1,$L(Vc(qqnump))-2) I $G(Vo(qqnump,Vc(qqnump,Vc(qqnump),0),2))'=1 S $$$CurObj=Vc(qqnump,Vc(qqnump),0) Q  ;@Dol 17.06.05 перемещение по встроенным
+ I '$G(con),$G($$$CurObj)'="",$G(Vo(qqnump,$$$CurObj,2))=1,$L(Vc(qqnump))>2 d  ;@Dol 21.02.08
+ .N qqcii S qqcii=Vc(qqnump) S:0 qqoi=$$$CurObj F  S Vc(qqnump)=$E(Vc(qqnump),1,$L(Vc(qqnump))-2) Q:Vc(qqnump)=""  I $G(Vo(qqnump,Vc(qqnump,Vc(qqnump),0),2))'=1,Vc(qqnump,Vc(qqnump),0)=$E($$$CurObj,3,255) S $$$CurObj=Vc(qqnump,Vc(qqnump),0) Q  ;@Dol 17.06.05 перемещение по встроенным;@Dol 17.05.11 ?qqoi
+ .I Vc(qqnump)="" S Vc(qqnump)=qqcii
+ N qObj,qqc,qOref1,qqo,qqver,qqq,del
+ S:$G(qOref)="" qOref=Vc(qqnump) S (qqo,qObj)=$G(Vc(qqnump,qOref,0)),qqc=$G(Vc(qqnump,qOref)) I qqo="" Q:$Q "" Q  ;@dol 22.04.08 !!! что-то не так, но иногда бывает
+ G:$G(con) RecDelcon
+ S qqq=..RecVerOp(qObj,3) I qqq D:$L(qqq)=1||($L($TR(qqq," "))'=1) ..Message($S($L(qqq)=1:"Запрещено удаление "_..RecObj(qObj),1:$E(qqq,2,32000)),,,$G(qqXBMesTime)) Q:$Q "" Q  ;@dol 6.11.03
+ ;I ..RecVerOp(qObj,3)  D ..Message("Запрещено удаление "_..RecObj(qObj)) Q:$Q "" Q
+ I $E(qqc,$L(qqc))=" ",$G(Vo(qqnump,-1,87))'=""||($G(Vo(qqnump,qObj,87))'="") D ..Message("Не существует экземпляр "_..RecObj(qObj),,,$G(qqXBMesTime)) Q:$Q "" Q  ;игнорирование удаления для несуществующего объекта (x187)
+ I ..RecVer(3,qObj)'="" Q:$Q "" Q  ;правило проверки перед удалением
+ I $S($G($$$Tree):0,$G(Vo(qqnump,qObj,2))>2:0,1:$L(qqc)<3),'W("Zadm") D ..Message("Удаление "_..RecObj(qObj)_" только в режиме администратора",,,$G(qqXBMesTime)) Q:$Q "" Q  ;слишком много может быть удалено
+ S qOref1=..RecObj(qObj,3) I qOref1'=""!($L(qqc)<3) D  Q:$Q 1 Q  ;для большого (предположительно) поддерева вопрос задается всегда
+ .;проверка на удаление поддерева ????
+ .I qARM.GetPar("X5222",,qObj)'="" s del=1 I '$G(Arg3),@Vo(qqnump,qObj,222) D  Q  ;@Dol 19.12.07 лог.удаление
+ ..D ..QuestionM("Удалить логически "_qOref1_$S('$G(W("Zadm")):"",1:"~Удалить из базы"),1,"","D qARM.RecDel("""_qOref_""",1)","D qARM.RecDel("""_qOref_""",1,1)") ;в режиме Администратор предоставлять выбор удаления Логически/физически
+ .D ..QuestionM("Удалить "_$S($G(del):"из базы ",1:"")_qOref1,1,"","D qARM.RecDel("""_qOref_""",1,1)")
+RecDelcon
+ I $G(Vo(qqnump,qObj,2))>2 D  I Vo(qqnump,qObj,2)'=6 Q:$Q 1 Q 
+ .;;I $G(Vo(qqnump,qObj,2))=6 S:'$D(Vo(qqnump,qObj,33)) Vo(qqnump,qObj,33)=qARM.GetPar("X533",,qObj) K @Vo(qqnump,qObj,33)@(qqc) Q  ;для массива
+ .;;Далее @Misuno обработка триггеров для массива
+ .I $G(Vo(qqnump,qObj,2))=6 S:'$D(Vo(qqnump,qObj,33)) Vo(qqnump,qObj,33)=qARM.GetPar("X533",,qObj) d  Q  ;для массива
+ ..n qqlw s qqlw=""
+ ..I '$D(Vo(qqnump,qObj,243)) S Vo(qqnump,qObj,243)=qARM.GetPar("X5243",,qObj),Vo(qqnump,qObj,248)=qARM.GetPar("X5248",,qqo)
+ ..I Vo(qqnump,qObj,248)'="" N qqend,qqo s qqo=qObj X Vo(qqnump,qqo,248) I $G(qqend) Q  ;@Misuno 17.03.07 триггер ДО
+ ..K @Vo(qqnump,qObj,33)@(qqc) 
+ ..D:$G(Vo(qqnump,qObj,243))'=""   ;@Misuno 17.03.07 (триггер После)
+ ...I Vo(qqnump,qObj,243)["(" n qqo s qqo=qObj X Vo(qqnump,qqo,243) ;@Misuno 17.03.07 @Dol 28.02.06 пользовательский методобработки согласованных изменений
+```
+
+---
+
+#### `Find(Arg1:%String,Arg2:%String,qqolst:%String,Con:%Library.String,NoDial:%Library.String,NoReFind:%Library.String,NoWarning:%Library.String,NoWr:%Library.String,n808)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I W("ZBt0") Q:$Q "" Q 
+ D ..ResetSrt()
+ I $D(qqolst) G FindBeg ;G FindLst:$G(qqolst)'="",FindBeg
+ I '$D(Arg1) S Arg1=+$G(Vs(qqnump,99,"Find")) I 1
+ E  S Vs(qqnump,99,"Find")=Arg1 D ..MenuAn("F")
+ I '$D(Arg2) S Arg2=+$G(Vs(qqnump,99,"Find",2)) I 1
+ E  S Vs(qqnump,99,"Find",2)=Arg2 D ..MenuAn("F")
+ I '$D(Vs(qqnump,8)) D FindMessage("Нет условий поискового образа") Q:$Q "" Q
+ D:..GetPar("X1193") ..Fix("") ;@dol 10.1.04
+ I $P($$$CondFind," ")'="" S $P($$$CondFind," ")="" D ..wbut(2) ;уберем упорядоченность
+ I $D(Vt(qqnump,111)),'$G(Con),$D(Vt(qqnump,111,0)) S %1=0 D  I '%1,W("Zadm"),'$g(NoWarning) D ..Question("Нет условий на невиртуальные объекты."_$C(13,10)_"Поиск МОЖЕТ занять много времени!!! Продолжить",1,"","D qARM.Wait(""D qARM.Find(,,,1)"")") Q:$Q "" Q
+ .S %2="" F  S %2=$O(Vs(qqnump,8,%2)) Q:%2=""  I $D(Vt(qqnump,111,0,%2)),$D(Vs(qqnump,8,%2))>1 S %1=1 Q
+FindBeg K:'$G(n808) Vs(qqnump,808) ;@dol 19.06.08 Наборы по ИЛИ ;@Dol 18.05.09 n808
+ ;проверка задания условия на одно понятие, встречающееся в разных объектах
+ S qqolst=..FindAll()   
+ I $G(Vs(qqnump,99,"Find",3)) G FindFon ;???,'$D(Vt(qqnump,111)) пока без виртуальных ;,'$G(Vt(qqnump,0))
+ S qqftime=$P($H,",",2),%1=qW.qFind(Arg1,Arg2,$G(qqolst)),qqftime=$P($H,",",2)-qqftime I W("Zadm"),qqftime>3,'$G(NoDial) D ..Message((qqftime\60)_":"_$E(qqftime#60+100,2,3),"Время выполнения")
+ I +%1'=%1 D FindMessage($S(%1["Не существует":" Ничего не найдено"_$C(13,10,13,10)_%1,1:"Ошибка в условии: "_%1)) Q:$Q "" Q  ;ошибка (SYNTAX)
+ I '%1 D FindMessage("Ничего не найдено") Q:$Q "" Q
+ S $$$RelNum=%1 G:$G(NoReFind) FindEndE ;;D ..wcre() Q:$Q "" Q  ;@Dol 11.11.04
+ S $$$ReFind=1
+FindEnd
+ I $G(Vs(qqnump,7))'="",'$G(Vs(qqnump,17)) D ..Fix() ;@Dol 8.10.07 раньше сбрасывалась всегда - теперь - если не жесткая
+ D ..wfot(-2)
+ S qqc="" I $G($$$CurObj)'="" S:'$D(^Q($$$Relind_qview,$$$CurObj)) $$$CurObj="" 
+ I $E($G(W("Zsform")))'=1||($G(W("Zsform"))>99) D ..wbuttb(401,1),..wbuttb(402,0) ;@Dol 15.05.07 D ..wP(qwin_".TBC.b401","Down",1),..wP(qwin_".TBC.b402","Down",0) ;.b62
+FindEndE I '$G(NoWr) D ..wcre() I $G(Vo(qqnump,-1,88))'=1,'$G(Vo(qqnump,-1,80)),$G(Vo(qqnump,-1,194))'="" D ..wP(qwin_".T2","RowColPictureH@1",$P(Vo(qqnump,-1,194)," ",''$$$RelNum+1),0) ;@Dol 23.01.07 заголовок колонки релевантных
+ I ..GetPar("X182")'="" N qObj S qObj=-1 D ..Value(Vo(qqnump,-1,82),"X") ;@Dol 13.08.07 действие по изменению релевантных ;@Dol 06.11.09 qObj
+ Q:$Q "" Q
+FindFon ;Запуск поиска в фоне ;?????? qA
+```
+
+---
+
+### UI Components
+
+#### `OpenPic(qqpar1:%String,qqpar2:%String,qqpar3:%String,qqpar4:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+S:$G(qqpar1)="" qqpar1=..GetPar(76,,qqo,$P(W("Zpos",2,"d")," ",3),W("Zpos",2,"x")) ;@dol 16.1.04
+ S:$E(qqpar1)="@" @("qqpar1="_$E(qqpar1,2,10000)) ;@Dima&@Dol 24.10.05
+ d qARM.wM("-qARM","PicWin",$S($E(qqpar1)="F":qqpar1,$E(qqpar1)="M":"M,"_$NA(@$E($P(qqpar1,")",1,$L(qqpar1,")")-1)_")",3,1000)),$E(qqpar1)="^":"M,"_$NA(@qqpar1),1:qqpar1),$S($G(qqpar3)="":qqpar1,1:qqpar3)) ;!!!появляется где угодно
+ Q:$Q "" Q
+```
+
+---
+
+#### `OpenText(Text:%String,Xec:%String,Capt:%String,Width:%String)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+S qxecute1=$G(Xec)
+ d qARM.wM("-qARM","Input",$G(Capt,"Строка"),$G(Text)) ;@dima 17.03.05
+ Q:$Q "" Q
+```
+
+---
+
+#### `OpenDate(Date:%Library.String,qqw:%Library.String,Xec:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+S Vo("par",-1,23)="S W(""ZBtred"")=1,W(""ZZxcute"")=""S qqend=1"",W(""ZZdate"")=$S($G(qqp4)="""":$ZD($H,8),1:qqc) D qW.oZZdate()"
+ S Vo("par",-1,73)=1,Vo("par",-1,72)="0 "_$S($G(qqw)="":"",1:"S W("""_qqw_""")=WS(qqnumpold,""ZZdate"")"_$S($E(qqw)="Z":"",1:" S:$G(W(""ZBtred"")) qqwchg=qqwchg_"" ""_"""_qqw_""""))_$S($G(Xec)="":"",1:" "_Xec)
+ D qARM.OpenWindow(,,",,0,11,,1,,,,0,3",$G(Date),,"XXXDate") Q:$Q "" Q
+```
+
+---
+
+#### `ColorDialog(Sender:%Library.String)`
+
+**Returns:** `%Library.String`
+
+**Implementation:**
+
+```objectscript
+$$$FEvent
+ D ..Value($G(qxecuted),"X") Q:$Q "" Q
+```
+
+---
+
+#### `Message(****Arg****1 ****As**** ****)`
+
+**Returns:** `nothing. `
+
+• method ObjLget**(Obj As ****)** returns nothing. 
+
+Длина кода экземпляра объекта Obj
+
+**Implementation:**
+
+```objectscript
+D qARM.Message(Arg1) Q:$Q "" Q
+```
+
+---
+
+#### `Question(question:%String,yes:%String,qqpar3:%String,qqpar4:%String,type:%Library.String=3,tv:%Library.String,fontsize:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I $G(W("Zmesb")) W !,"Вопрос: "_$G(question)_" "_$S($G(yes):"Да",1:"Нет") Q:$Q $G(qqpar2) Q  ;вывод на текущее у-во для WebLink
+ I $G(qqnump)'="","PQW"[$G(qqnump) N qwin S qwin="Q"_$P(qqParent," ",2) ;@dima 22.01.08: $G(qqnump)'=""
+ S qxecute0=$G(qqpar3),qxecute1=$G(qqpar4) 
+ D ..wG("-qARM","ShowMessagePos",qwin,$G(question,"Вопрос")_" ?","Вопрос",$S($G(tv)="":3,1:tv),type,'$G(yes)+2,$G(fontsize)) Q:$Q "" Q
+```
+
+---
+
+### Export/Import
+
+#### `StreemExp(ref As ****, qqo As ****, qqc As ****, Rel As ****, cordtu As **** = 0, ext As ****, extdo As ****, Nopar As ****, NoC As ****, desobj As ****)`
+
+**Returns:** ` `
+
+Создание массива потока ref - ссылка на массив qqo - код объекта. Если qqo="" сохранять поддеревья вершины отображения qqc qqc - код экземпляра (или qqc_"*" - тогда qqc -общее начало кода) Rel =1 - сохранять по перечню релевантных полные поддеревья (если пуст, всю базу) Rel =2 - сохранять только (!!!) по перечню релевантных cordtu=1 - сохранять дату время пользователь создания/коррекции ext=1 - внешний вызов Set qW=##class(%qWORD).%New() D qW.StreemExp("^QS(1)",153,"",1,1,1) - сохранит поддеревь
+
+**Implementation:**
+
+```objectscript
+;словари ? физ деревья ??
+ N qqMasLst,qqAddqqw,qqz,qqwi,qStreem,ww,wwi ;массив хранения ссылок на потомков и дополнительных понятий (пока H*)
+ I $G(ref)="" Q:$Q "" Q
+ I $P(ref,"(")="^Q" S a=1/0 ;катастрофа
+ S qStreem=1 I $G(ext) S qqz=$G(qview) N qqnump,qview  D  ;внешний вызов. qW должно быть
+ .S qARM=##class(%TqARM).%New()
+ .S qWEB=##class(%qWEB).%New()
+ .S qSYS=##class(%qSYS).%New()
+ .;S qW=##class(%qWORD).%New()
+ .X "S qUSER=##class(qUSER).%New()" ;заморочки с контролем для V4
+ .S qqnump="S",$$$Tree=0 K Vs(qqnump),Vo(qqnump),Vt(qqnump) D qSYS.BaseIni() ;K @ref ;?????? ;K V* @dol 21.10.03
+ .S $$$ReFind=0,$$$RelNum=0,$$$Relind=0,$$$CurObj="",$$$CondFind="" S:$G(qqo)="" Vo(qqnump)=$G(qqc) ;@dol 13.02.04 S:$G(qqo)=""
+ .I $G(extdo)'="" D qARM.Value(extdo,"X")
+ ;
+ I $G($$$Tree) D  Q:$Q "" Q  ;для физического дерева
+ .M @ref@(qqo,qqc)=@$$$GloRef@(qqo,qqc)
+ .D StreemAdd ;CC ???
+ I $G(Vo(qqnump))="XXXX" D  Q:$Q "" Q  ;специальный вариант для копирования из проводника
+ .I '$G(Rel) D StreemXXXX(qqo,qqc) Q
+ .N qqrn S qqrn=$S('$$$RelNum:1,1:$$$Relind_qview) 
+ .N qqo F qqo="XView","XQuery","CxObj","CxWoc" D StreemXXXX(qqo,"")
+ I $G(Vo(qqnump))="XXXqWClass" Q:'$D(^Q($$$Relind_qview)) "Нет релевантных" N qqrn S qqrn=$G($$$ReFind),$$$ReFind=1 D  S $$$ReFind=qqrn Q:$Q "" Q  ;специальный вариант для копирования методов классов (только релевантные)
+ .N qqc1,qqc2 S qqc1="" F  S qqc1=..gOrder(1,"XClass",qqc1,"") Q:qqc1=""  D
+ ..S qqc2="" F  S qqc2=..gOrder(1,"XClassMetod",qqc2,qqc1) Q:qqc2=""  D
+ ...;K @ref@("XClass",qqc1,"method",qqc2) M @ref@("XClass",qqc1,"method",qqc2)=^oddDEF(qqc1,"method",qqc2)
+ ...K @ref@("XClass",qqc1_" "_qqc2) M @ref@("XClass",qqc1_" "_qqc2)=^oddDEF(qqc1,"method",qqc2) ;чтобы было видно при просмотре потока
+ N qqrn I '$G(Rel),qqo'="",$G(qqc)'["*"  D StreemT(qqo,qqc,1,ref,1) Q:$Q "" Q  ;для логического дерева
+ ;перечень релевантных
+ S qqrn=$S('$G($$$RelNum):1,1:$$$Relind_qview)
+ I qqo'="" D  Q:$Q "" Q  ;поддеревья текущего объекта
+```
+
+---
+
+#### `StreemImp(ref As ****, Rel As **** = 0, cordtu As **** = 1, Obj As ****, qqc As ****, Nobegqqc As **** = 1, cqqc As **** = 1, qqcbeg As ****, Xec As ****, LineChObj As ****)`
+
+**Returns:** ` `
+
+Восстановить массив потока ref - ссылка на массив Rel =1 - записать восстановленные в релевантные qqo, qqc - для частичного восстановления qqo - код восстанавливаемого объекта вершины потока . Если qqo="" - все вершины в потоке qqc - код экземпляра восстанавливаемого объекта Nbegqqc=1 - игнорировать диапазон кодов cqqc=1 - замещать одинаковые коды, 0 - всегда порождать новые qqcbeg - желаемое начало кодов востанавливаемых экземпляров (!!!всех объектов) Восстановленные экземпляры убираются из пот
+
+**Implementation:**
+
+```objectscript
+I $G(ref)="" Q:$Q "No Ref" Q
+ I '$D(@ref) D qARM.Message(ref_" не существует") Q:$Q "" Q
+ I $G(qview)="" N qview S qview="XXXStreemImp"
+ N qqrn,qqClass,qqo,qqwchg,qqcret,qStreemImp 
+ N $ET S $ET="S qqcret=$ZE Q:$Q qqcret Q  " ;ОТКЛЮЧИТЬ (закоментировать) ДЛЯ ОТЛАДКИ
+ S qqrn=$S($G(qqnump)="":0,1:+$G($$$Relind))_qview,Xec=$G(Xec) ;@dol 7.10.04 $G(qqnump)
+ N qqnumpo S qqnumpo=$G(qqnump,0) N qqnump
+ S qqnump="S" ;псевдоотображение для потока
+ S qStreemImp=1 ;Флаг для триггеров
+ K Vo(qqnump),Vs(qqnump) S Vo(qqnump)=$P($G(qview,"####")," ") S LineChObj=$G(LineChObj)
+ S $$$Tree=0 ;только логическое дерево
+ I $G(Obj)'="" D StreemI(Obj,ref,$G(qqc),1,cqqc) G StreemIend ;qqc????
+ S Obj="" F  S Obj=$O(@ref@(Obj),-1) Q:Obj=""  D StreemI(Obj,ref,"",1,cqqc)
+StreemIend I Rel,$D(^Q(qqrn)) S Vs(qqnumpo,"RelNum")=1,Vs(qqnumpo,"ReFind")=1
+ I $D(qqClass) N error,er,qq,qqq S er="" D  Q:$Q er Q  ;компиляция обновленных классов
+ .S qqClass="" F  S qqClass=$O(qqClass(qqClass)) Q:qqClass=""  D
+ ..D Compile^%apiOBJ(qqClass,"-dfk",.error) S:'error error=""
+ ..I 'error X "S "_$S($P(qqClass,".",2)="TqARM":"qARM",$P(qqClass,".",2)="qWORD":"qW",1:$P(qqClass,".",2))_"=##class("_qqClass_").%New()" Q
+ ..S qq=error,error="Ошибка компиляции класса "_qqClass F qqq=1:1:qq S error=error_$C(13,10)_error(qq)
+ ..S er=$S(er="":"",1:er_$C(13,10))_er
+ Q:$Q $G(qqcret) Q
+ ;
+StreemI(Obj,ref,qqc0,level,cqqc) 
+ ;cqqc=0 - явное порождение поддерева
+ N ORef,qqc,qqw,Lqqc,Lqqw,qObj,qqc1,NoCor,qqwi,cqqc0,LYqqw,flagCxObj
+ S qObj=Obj I LineChObj'="" S qObj=$P(LineChObj," ",level) S:qObj="" qObj=Obj ;@Dol 29.10.04 цепочка замен объектов
+ S qqc=qqc0,cqqc0=cqqc
+ I '$D(Vo(qqnump,qObj,220)) S Vo(qqnump,qObj,220)=$G(^Q(1,"CxObj",qObj,"X5220")) ;@dol 11.11.03 список ключевых потока
+ S Lqqc=$G($$$ObjLqqc(qObj)) I Lqqc="" S $$$ObjLqqc(qObj)=$G(^Q(1,"CxObj",qObj,"X50"),255) ;$S($E(qObj)="C":255,1:$L(qqc0)+2)) ;?????
+ S ORef="" F  S ORef=$O(@ref@(Obj,ORef)) Q:ORef=""  D
+```
+
+---
+
+#### `OpenLoadFile(qqo:%Library.String,qqw:%Library.String,qqc:%Library.String,XDo:%Library.String,size:%Library.String=0)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I $G($$$Tree) N Glo S Glo=$NA(@$$$GloRef@(qqo,qqc,qqw)) D qARM.OpenWinDialog("K "_Glo_" S W(""X368"")=qARM(""qpars"",0),qqwchg=qqwchg_""X368"" D qARM.ReadClientFile(qARM(""qpars"",0),"_size_","""_qSYS.dblqw(Glo)_""","""")"_$S($G(XDo)="":"",1:",qARM.Wait("""_qSYS.dblqw(XDo)_""")")) Q:$Q "" Q
+ I $G(Vo(qqnump,qqo,2))=6 N Glo S Glo=$NA(@Vo(qqnump,qqo,33)@(qqc,qqw)) D qARM.OpenWinDialog("K "_Glo_" S W(""X368"")=qARM(""qpars"",0),qqwchg=qqwchg_""X368"" D qARM.ReadClientFile(qARM(""qpars"",0),"_size_","""_qSYS.dblqw(Glo)_""","""")"_$S($G(XDo)="":"",1:",qARM.Wait("""_qSYS.dblqw(XDo)_""")")) Q:$Q "" Q  ;14.09.05 @Dol Для массивов в новой системе проектирования
+ D qARM.OpenWinDialog("K ^Q(1,"""_qqo_""","""_qqc_""","""_qqw_""") D qARM.ReadClientFile(qARM(""qpars"",0),"_size_",""^Q(1,"""""_qqo_""""","""""_qqc_""""","""""_qqw_""""")"","""")"_$S($G(XDo)="":"",1:",qARM.Wait("""_qSYS.dblqw(XDo)_""")")) Q:$Q "" Q
+```
+
+---
+
+#### `ReadClientFile(file:%Library.String,size:%Library.String,var:%Library.String,erract:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+S var=$NA(@var) I var["^Q(",$QL(var)<4 D ..Message("Недопустимо. Запись в массив базы "_var,"qARM.ReadClientFile") Q  ;@Dol 20.07.07
+ d ..wC("TFileStream","ClRdStrm",file,64,erract),..wM(,"ReadFile",size,var),..wM(,"Destroy")
+ q
+```
+
+---
+
+#### `SaveToClipbrd()`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+N qqw,mas S qqw=$O(Vo(qqnump,qqo,10,"")) S:qqw'="" qqw=qW.GG(qqo,Vo(qqnump,qqo,10,qqw),qqc) S qqw=$P($P(qARM("CntStr"),":",2),"[")_":"_$P(qARM("CntStr"),":",3)_" "_qqo_" "_..wcroCell(qqo)_" ("_qqw_")"
+ S mas=$NA(^mtempQW(qARM("ComputerName")))
+ K @mas@(2) D qW.StreemExp($NA(@mas@(2)),$S($E(qqo)'="v":qqo,1:$E(qqo,3,255)),qqc,,,,,1,,0) ;@Dol 25.09.08 сохранялось по описанию объекта. теперь все физически существующие в объекте. Проблема с характеристиками - переносятся только при копировании объекта ww ;;;$S(qqo="w"||(qqo="ww"):0,1:1)) ;@Dol 01.11.07 ;,,,);@Dol 7.01.08 ww
+ S @mas@(0)="K "_$NA(@mas@(2))
+ S @mas@(1)="X qBuFfXec" ;действие после восстановления. См. ..TestPaste
+ D ..wM("-qARM","SaveToClipbrd",$NA(@mas@(2)),mas,qqw) Q:$Q "" Q
+```
+
+---
+
+### Analytics
+
+#### `Anal(Arg1:%String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I W("ZBt0") Q:$Q "" Q
+ D ..ResetSrt()
+ I '$D(Vs(qqnump,12)) D ..Message("Не определен аналитический срез") Q:$Q "" Q
+ ;;;@dol 16.05.04 I $D(Vt(qqnump,111)) S %1=$P($G(Vs(qqnump,12))," ",1) I %1'="",$L($$$ObjRef(%1),",")'=1,'$D(Vt(qqnump,111,0,%1)) D ..Message("Первая аналитика должна быть выше поддерева виртуального объекта.") Q:$Q "" Q
+ D:..GetPar("X1193") ..Fix("") ;@dol 10.1.04
+ I '$D(Arg1) S Arg1=+$G(Vs(qqnump,99,"Anal")) I 1
+ E  S Vs(qqnump,99,"Anal")=Arg1 ;D ..MenuAn("A")
+ S qqftime=$P($H,",",2)
+ D:qW.qAnal($G(Vs(qqnump,99,"Anal",0)),$G(Arg1),,$G(Vs(qqnump,99,"Anal",1)),,$G(Vs(qqnump,99,"Anal",2))) ..Message("Нет значений для заданного порога")
+ S qqftime=$P($H,",",2)-qqftime I W("Zadm"),qqftime>3 D ..Message((qqftime\60)_":"_$E(qqftime#60+100,2,3),"Время выполнения")
+ I $G(W("Zar"))'="" D qSYS.CreAr(W("Zar"))
+ D:$D(qwin(qwin,"o",1,1)) ..wcrm("200_1",1,"",''$D(^Qa($S($G(W("Zar"))="":"A"_qview,1:W("Zar")))))
+ D ..MenuAn("A")
+ ;вывод вычисленных значений
+ N qqo,qqw,qi S qqo="" F  S qqo=$O(Vs(qqnump,12,qqo)) Q:qqo=""  D:$G(Vs(qqnump,4,qqo))
+ .S qqw="" F  S qqw=$O(Vs(qqnump,12,qqo,qqw)) Q:qqw=""  D
+ ..D ..wM(qwin_".T1","M9",1,0,qqo_" "_qqw)
+ ..F qi=5:1:11 S %2=$G(Vs(qqnump,13,0,qqo_" "_qqw_" "_qi)) S:%2'="" %2=%2_": " D ..wP(,"M1",%2_$G(Vs(qqnump,12,qqo,qqw,qi)),"",qi)
+ Q:$Q "" Q
+```
+
+---
+
+#### `qAnal(qqpar1:%String=0,qqpar2:%String=0,qqpar3:%String,por:%String=0,qanam:%Library.String,all:%Library.String=0)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+/*
+    15.12.2008 Kokarev - явное имя ^CacheTemp заменено на макрос $$$tmpGl
+    */
+ ;N $ET S $ET="D qARM.Error() S $EC="""" ZQ 1 Q:$Q """" Q  "
+ S qqpar3=$G(qqpar3) S:qqpar3 qqpar3="" ;1 - построение иерархии ссылок на экземпляры объектов
+ N qqao,qqao0,qqao1,qqao2,qqao3,qqc,qqw,qobn,qobnA,qqwA,qqpar3o,Cond,qqob,qqob0,qQo,qAn,qqwLA,qqref,Virt,qAnalDO ;@dol 21.01.03 qqref
+ S qAnalDO=1 ;идет аналитика
+ ;S:qW.GG("XBase","XFNewAn",0) qAn=1 ;новый вариант аналитики
+ I $$$ReFind S Cond=0 I 1
+ E  S Cond=$G(Vt(qqnump,0)) ;если уточнение, пстоянные условия проверять не надо (???)
+ I $G(qanam)="" S qqrela=$S($G(W("Zar"))="":"A"_qview,1:W("Zar")),qanam=$NA(^Qa(qqrela)) ;,"A",1))
+ K @qanam,$$$tmpGl($J,"A") ;слой аналитики ; 15.12.2008 Kokarev
+ ;очистка отображения и выражения постобработки (в Vs(qqnump,"12p") ;@Dol 07.06.09
+ K Vs(qqnump,"12p") S qqao="" F  S qqao=$O(Vs(qqnump,12,qqao)) Q:qqao=""  S qqao0="" F  S qqao0=$O(Vs(qqnump,12,qqao,qqao0)) Q:qqao0=""  D
+ .F qqao1=5:1:11 K Vs(qqnump,12,qqao,qqao0,qqao1)
+ .I $G(Vs(qqnump,12,qqao,qqao0,4))="D",$G(Vs(qqnump,12,qqao,qqao0,2))["@@@" S Vs(qqnump,"12p",qqao,qqao0,2)=$P(Vs(qqnump,12,qqao,qqao0,2),"@@@",2,255) ;выражения постобработки
+ ;составление массива объектных ссылок поиска qfn. Исключаются объекты вне зоны фиксации
+ K qfn,qfn0,qfn1,Vt(qqnump,111,12),Vt(qqnump,111,13)
+ S qqo="" F  S qqo=$O(Vs(qqnump,12,qqo)) Q:qqo=""  I $S($G(Vs(qqnump,7))="":1,1:'$G(Vs(qqnump,7,qqo))) D
+ .;I '$D(Vo(qqnump,qqo)) S Vo(qqnump,qqo,5)=$G(^Q(1,"CxObj","XORef")),Vo(qqnump,qqo,0)=$G(^("X50"),255)
+ .S qfn($$$ObjRef(qqo)_",")=""  I qqpar3="",$G(Vs(qqnump,12,qqo)) S qqpar3=1 ;автомат.опр.наличия ссылок на экземпляры
+ ;нормализация (выделение вершин). массив qfn0
+ S qqob0=""  F  S qqob0=$O(qfn(qqob0)) Q:qqob0=""  D  S qqob0=qqob0_"я"
+ .S qqob=$O(qfn($P(qqob0,",")_","_"я"),-1) I qqob'=qqob0 D  S qqob0=$P(qqob0,",",1,qqfi-1)_","
+ ..F qqfi=1:1 Q:$P(qqob,",",qqfi)'=$P(qqob0,",",qqfi)
+ .S qqob=qqob0,qqfi=$L(qqob0,",") D  F  S qqob=$O(qfn(qqob)) Q:$P(qqob,",",1,qqfi-1)_","'=qqob0  D
+ ..S qqo=$P(qqob,",",$L(qqob,",")-1),qfn0($P(qqob,",",qqfi-1,255))=""
+ ..Q:'$D(Vt(qqnump,111))   ;Vt(qqnump,111,12,qqo)=ссылка - массив принадлежности к поддереву виртуальных
+ ..S Vt(qqnump,111,13,qqo)=$L(qqob,",")-qqfi+1 ;длины ссылок
+ ..F qqao0=qqfi-1:1:$L(qqob,",")-1 I '$D(Vt(qqnump,111,0,$P(qqob,",",qqao0))) S Vt(qqnump,111,12,qqo)=$P(qqob,",",qqfi-1,$L(qqob,",")-1) Q
+```
+
+---
+
+#### `Sort(qqo:%Library.String,qqw:%Library.String,Value:%Library.String,Arg1:%Library.String,Beg:%Library.String,Nowr:%Library.String,qqc0:%Library.String,SortV:%Library.String,SortVn:%Library.String,New:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+S:$G(Arg1) $$$CurObj=qqo
+ S $P($$$CondFind," ")=qqw,$P($$$CondFind," ",5)="",$P($$$CondFind," ",6)=""
+ K Vs(qqnump,"SortV"),Vs(qqnump,"SortVn") I $D(SortV) S:$G(qqc0)="" qqc0=$P($$$CondFind," ",10) D qW.CreSortV(qqw,qqo,$G(Value),qqc0,$G(SortV),$G(SortVn),$G(New)) ;@Dol 27/06/06
+ S:0 qqc="" S W("Zosrt")=qqo S Vt(qqnump,7)=$G(Vs(qqnump,7)) K:..GetPar("X1193") Vs(qqnump,7) ;@dol 10.1.04
+ I $G(Vs(qqnump,"SortV"))="",$$$ReFind||qARM.GetPar("X1199") D qW.RelWoc(qqw,W("Zosrt"),$G(Value))
+ I $G(Beg) S W(qqw)="",qqc="" I 1
+ E  S W(qqw)=qW.GG(qqo,qqw,qqc)
+ I '$G(Nowr) S:$G(qqXBwids) W("ZBtredo")="" D ..wcre() 
+ Q:$Q "" Q
+```
+
+---
+
+#### `MenuAn(Arg1:%String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+S:$P($G(Vo(qqnump,-1,70))," ",5)'="" Vs(qqnump,99,"Pic")=$P($G(Vo(qqnump,-1,70))," ",5) ;@dol 10.02.02
+ N i,qnpic I $G(W("Zsform"))=1!($G(W("Zsform"))=11) Q:$Q "" Q
+ S:$G(Arg1)="" Arg1="LBFADS"
+ D:$D(^Q(1,"XView",Vo(qqnump),"XMenu",5))  ;@dol 20.08.04 меню картинк-ресурсов
+ .S qnpic=1 D ..wP(qwin_".TBM.b23","Style",2),..wP(qwin_".TBR","Left",150)
+ .I $D(qwin(qwin,"XU5")) D ..wM(qwin_".XU5","Destroy") K qwin(qwin,"XU5")
+ .S qwin(qwin,"XU5")="" D ..wC("TPopupMenu",qwin_".XU5"),..wP(qwin_".TBM.b23","DropdownMenu","XU5"),..MenuCre(,,5,1)
+ D:$D(^Q(1,"XView",Vo(qqnump),"XMenu",6))  ;@dol 20.08.04 меню настроек
+ .I Arg1["L" S Arg1=$P(Arg1,"L")_$P(Arg1,"L",2)
+ .I $D(qwin(qwin,"XU6")) D ..wM(qwin_".XU6","Destroy") K qwin(qwin,"XU6")
+ .S qwin(qwin,"XU6")="" D ..wC("TPopupMenu",qwin_".XU6"),..wP(qwin_".TBM.b20","DropdownMenu","XU6"),..MenuCre(,,6,1)
+ I $G(W("Zsform"))<100,qqllang'="",Arg1["L" D  ;язык
+ .D ..wcrm("P550",1,"",1,0)
+ .D ..wcrm("50_1",+$G(qwin(qwin,"Lang")),"Русский",","_(qqlang=1))
+ .F i=1:1:$L(qqllang," ") S %1=$P(qqllang," ",i) D:%1'=1 ..wcrm("50_"_%1,+$G(qwin(qwin,"Lang")),qW.GetWoc("CxLang",%1),","_(qqlang=%1))
+ .S qwin(qwin,"Lang")=1
+ D:Arg1["B"  ;Начальные установки
+ .D:'$G(qnpic)&&($G(W("Zsform"))<100) ..wP(qwin_".TBM.b23","Down",+$G(Vs(qqnump,99,"Pic"))) ;Рисунок
+ .D ..wP(qwin_$S($G(W("Zsform"))<100:".TBC",1:".T1.TBC")_".b402","Down",'$$$ReFind),..wP(qwin_$S($G(W("Zsform"))<100:".TBC",1:".T1.TBC")_".b401","Down",$$$ReFind) ;выбор/уточнение
+ .D:$G(W("Zsform"))<100 ..wcrm("P10_10p4",1,"",W("Zadm"),0)
+ .I $P($G(qARM("Ver","qARMProj1.ocx")),".",4)'="" D ..wcrm("P7101",1,"",$E(..GetPar(168))'="-") D  Q  ;Запросы... ;@Dol 24.05.07 временно на переходный период
+ ..D ..wcrm("158_6",0,"Веб диаграмма") ;диаграмма
+ ..D ..wcrm("158_7",0,"диаграмма CFX NEW") //@AKA 08.02.2011
+ ..D ..wcrm("169_21",0,"-",,0),..wcrm("169_6",0,"Параметры приемник-печать",0,0),..wcrm("169_22",0,"-",,0) ;@Dol 30.04.09
+ ..D ..wcrm("169_8",0,"Размер колонки № п/п",,0),..wcrm("169_8_2",0,2),..wcrm("169_8_5",0,5),..wcrm("169_8_0",0,0)
+ ..D ..wcrm("169_14",0,"№п/п только для A",,0),..wcrm("169_14_0",0,"для всех"),..wcrm("169_14_1",0,"A1"),..wcrm("169_14_2",0,"A1-A2"),..wcrm("169_14_3",0,"A1-A3")
+ ..D ..wcrm("169_15",0,"Не выводить ИТОГО")
+ ..D ..wcrm("169_16",0,"Замена пустых значений",,0),..wcrm("169_16_1",0,"???"),..wcrm("169_16_2",0," пробел"),..wcrm("169_16_3",0,"- минус")
+ ..D ..wcrm("169_9",0,"Повтор одинаковых значений")
+ ..D ..wcrm("169_10",0,"Наследование типов данных аналитик")
+```
+
+---
+
+### Editing
+
+#### `StartEdit(X731:%Library.String,x730:%Library.String,X73:%Library.String,Red:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I $G(Red),$G(W("ZBtred")) K Red
+ I $G(Red) S W("ZBtred")=1 N qqnumpRr S qqnumpRr=qqnump ;@Dol 20.10.09
+ D
+ .I $D(X73) S %1=..StartEditT2($G(X731),$G(x730),$G(X73)) Q
+ .I $D(x730) S %1=..StartEditT2($G(X731),$G(x730)) Q
+ .S %1=..StartEditT2($G(X731)) Q
+ S qqredS=qqred ;будет использоваться как флаг, если вызвано из правила проверки (чтобы не сбросить qqred)
+ I %1=-1 D ..wM(qwin,"EvClose") S:$G(Red) W("ZBtred")=0 Q:$Q "" Q
+ I %1=112 S %1=..s112() G:+$G(W("Zcdrl"))=6 StartEdE I %1=-1 D ..wM(qwin,"EvClose") S:$G(Red) W("ZBtred")=0 Q:$Q "" Q  ;развертка (большой текст- выход) или выход из формы по развертке-действию (9)
+ I qqred'="",$S(+W("Zcdrl")=12:0,+W("Zcdrl")=3:1,+W("Zcdrl")'=2:1,1:'$P(W("Zcdrl")," ",2)) D ..wfoc(2,"",W("Zpos",2,"x"),W("Zpos",2,"d")) ;очень сомнительное место ;,+W("Zcdrl")'=2:1 - развертка-меню
+ S qqredS=qqred
+StartEdE I $G(Red) S:qqnumpRr=qqnump W("ZBtred")=0 S:qqnumpRr'=qqnump WS(qqnumpRr,"ZBtred")=0 ;@Dol 20.10.09 м.б. другое окно
+ Q:$Q "" Q
+```
+
+---
+
+#### `EndEdit(qqstr:%String,qqkey:%String,Arg1:%Library.String,Arg2:%Library.String,Nowr,redqqw)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+N qqdat,qqx,qqy,qqtr,qqwred ;@dol 3.2.04 добавлен анализ qqkey при переходах (можно только по Enter?)
+ S:$G(redqqw)'="" qqred=redqqw ;@Dol 03.08.09
+ K W("Zpdrl") ;развертка по большому словарю выключена
+ K W("Zederr") ;флаг для отлова ESC
+ S qqkey=$G(qqkey),qqtr=qqred'="ZfI9"+1 ;номер дерева (в дереве 1 всегда редактируемое понятие ZfI9)
+ S qqdat=$G(W("Zpos",qqtr,"d")),qqx=+$G(W("Zpos",qqtr,"x")),qqy=+$G(W("Zpos",qqtr,"y"))
+ I qqtr=1 S %1=$$wz631(qqstr,qqkey) D:%1=""&('W("ZBt0")) ..wM(qwin_".T1","M9",1,0,qqdat,1) I 1 ;@Dol 15.10.08 остаться на текущей строке в дереве объектов ;;;$$$CurObj,1) I 1
+ E  S %1=$$wz632($G(qqstr),qqkey) d:$D(Vt(qqnump,9,"FCBUT")) ..wM(qwin,"Vol_ArrayElementPaint") ;@dol 7.11.04 перерисовка кнопок
+ S:qqkey=0 qqkey=13 ;@Dol 19/19/06 выход из экранных разверток
+ I %1="" G:($P($G(Vo(qqnump,-1,856))," ",1)=1)&&(qqkey'=120) MetTab G:qqtr=1 EndEd0 G:$G(Arg1)||(..GetPar("X179")=2)||('$G(qqkey)) EndEd0 D  G EndEd0 ;@dol 14.03.03 после редактирования - встали на следующее понятие  ;;вставка 03.10.06 @Sasha MetTab @sas+dim &&(qqkey'=120)
+ .I $S(qqkey=9:0,..GetPar("X179")=1:0,1:1) D qARM.NextEdit($S(qqkey=120:"-",1:"")_qqwred,1) Q  ;@Dol 15.04.07 @sas 20081212 не работало открытие развертки по понятию из редактируемой ячейки по F9, происходило открытие развертки по следующему понятию
+ .;;I $S(qqkey=9:0,..GetPar("X179")=1:0,1:1) D qARM.NextEdit(qqwred,1) Q  ;@Dol 15.04.07
+ .I $P($G(qARM("Ver","qARMProj1.ocx")),".",2)>4 D qARM.NextEdit(qqwred) Q
+ .D ..Wait("D qARM.NextEdit("""_qqwred_""")")
+ I %1=-1 D:$G(qwin(qwin,"child"))'=""  S:$D(W("Zdomod")) W("Zdomod")=2 S:..GetPar("x173")'="" Vo(qqnump,-1,73)=2 D ..wM(qwin,"EvClose") G EndEd0 ;Выход из экрана
+ .D qARM.GetBqqnump(1) ;@Dol 14.01.08 переход в базовое окно
+ I qqtr=2,$E(%1)?1N G:%1="3-"||$G(Arg1) EndEd0 N qNx S qNx=%1 G:$S(+qNx'=1:0,1:..EndOP()) EndEd1 G:$D(String)||($G(qqkey)'=9&&($G(qqkey)'=13)) EndEd0 G:$S(qNx'[":":0,+qNx=1:0,1:..EndOP()) EndEd1 Q:$S(qNx'[":":0,1:'..Obj($P($E(qNx,2,255),":"))) 1 S:qNx[":" qNx=$E(qNx)_$P(qNx,":",2) S:qNx=1&&('..GetPar("X179")) qNx=3 G:$E(qNx,2,255)'=""||(+qNx=2)||(+qNx=3) EndEdN G:($P($G(Vo(qqnump,-1,856))," ",1)=1) MetTab G EndEd0 ;@Dol 2.08.02 немедленнная запись измененных значений @dol 16.02.03 и переход к редактированию заданного/следующего понятия ;;вставка 03.10.06 @Sasha MetTab
+ ;ненормальное завершение - выдача сообщения и позиционирование на старое место 
+ ;S W("Zederr")=1 
+ I +W("Zcdrl")=6 D ..Message(%1,,,$G(qqXBMesTime)) G EndEd1 ;внешний текст ?????
+ I $D(String) S W("Zederr")=1 D ..Wait("D qARM.Message("""_qSYS.dblqw(%1)_""",,,$G(qqXBMesTime)) K W(""Zederr"") S (qqw,qqred)="""_qqred_""" D qARM.wpoe("""_qqdat_"""),qARM.wfoc("_qqtr_","""","_qqx_","""_qqdat_""")") G EndEd1 ;@Dol 24.11.06 вставлен ..Wait вместо Cancel=1 в ..OnAfterEdit
+ ;;'$D(String) - не из AfterEdit
+ I qqtr=2,$P(W("Zcdrl")," ",2)=1&(+W("Zcdrl")'=3) D ..Message(%1,,,$G(qqXBMesTime)) N qqw S qqw=qqred,W(qqw)=qW.GG($P(qqdat," ",2),qqw,qqc),qqred="" D ..wwww(qqw) G EndEd1 ;если только развертка ?;@Dol 27.04.06 Убрано $P(W("Zcdrl")," ",2)=1&(+W("Zcdrl")'=3) - появилась развертка-календарь
+ ;S W("Zederr")=1
+ ;I qqtr=2,$G(Vo(qqnump,$$$CurObj,0,$P(W("Zpos",2,"d")," ",3),qqx,44))'="",Key<0 D ..Message(%1) D ..OpenTimer(200,"S (qqw,qqred)="""_qqred_""" D qARM.wpoe("""_qqdat_"""),qARM.wfoc("_qqtr_","""","_qqx_","""_qqdat_""")") G EndEd1 ;маска и ушли по потере фокуса
+ N qq S qq=$G(Vo(qqnump,$$$CurObj,0,$P(W("Zpos",2,"d")," ",3),qqx,10))  ;@dol 18.02.04
+ I qqtr=2,$P($G(qARM("Ver","qARMProj1.ocx")),".",2)<5,$G(Vo(qqnump,$$$CurObj,0,$P(W("Zpos",2,"d")," ",3),qqx,44))'=""||(qq=1)||(qq=6)||(qq="Ht")||(qq="T")||(qq=10)||($E(qq)="M") S W("Zederr")=1 D ..wwww(qqw),..Message(%1),..Wait("S (qqw,qqred)="""_qqred_""" D qARM.wpoe("""_qqdat_"""),qARM.wfoc("_qqtr_","""","_qqx_","""_qqdat_""")") G EndEd1 ;маска и ушли по потере фокуса;@Dol 16.02.06 D ..OpenTimer(100,->Wait
+ Q:$Q 1_%1 Q  ;@Dima@Dol 10.07.07 вывод по возврату в OnCommmonExitEdit + заблокирован wwww в строке I qqpodo'="",qqpodo'=-1.... ;;;;D ..Message(%1) D:0 ..wM(qwin_".T"_qqtr,"M9",1,0,qqdat) D ..wfoc(qqtr,qqy,qqx) ;D ..OpenTimer(50,"D qARM.wfoc("_qqtr_","""","_qqx_","""_qqdat_""")")
+EndEd1 Q:$Q 1 Q
+EndEd0 Q:$Q 0 Q
+```
+
+---
+
+#### `NextEdit(qqwt:%String,Arg1:%Library.String)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+N qqdatold S:$G(qqo)="" qqo=$G($$$CurObj) ;???
+ I qqo'=$G($$$CurObj),$G($$$CurObj)'="" S qqo=$$$CurObj ;с qqo иногда все неблогополучно
+ I '$D(qqwt) S qqdatold=$G(qqdat) G NextEB
+ ;поиск следующего редактируемого понятия
+ ;не очень хорошо
+ N qi,qq,qqq,qqx,qqy,qqdat,qqz S (qqdatold,qqdat)=$G(W("Zpos",2,"d"))
+ I $E(qqwt)="-" S qqwt=$E(qqwt,2,255) G NextE2
+ S:$E(qqwt,1,3)="ZZR" qqwt=$E(qqwt,4,20)
+ I qqwt="" S (qqyi,qqxi,qi)=0 G NextE0
+ F qi=1:1 S qq=$G(Vo(qqnump,$$$CurObj,10,qi)) Q:qq=""!(qq=qqwt)
+ I qq="" Q:$Q "" Q 
+NextE0 F qi=qi+1:1 S qq=$G(Vo(qqnump,$$$CurObj,10,qi)) Q:qq=""  S qqq=$G(Vo(qqnump,$$$CurObj,11,qq)) I qqq'="" S qqz=$G(Vo(qqnump,$$$CurObj,0,$P(qqq," "),$P(qqq," ",2))) I $S($E(qqz,2,4)'="@ZX"||($E(qqz)=6):1,$E(qqz,2,255)="@ZXXmove":0,1:$E(qqz,2,255)="@ZXXadd") Q:..RedTest($$$CurObj,$P(qqq," "),$P(qqq," ",2))  ;@Dol 7.02.08 $G(Vo(qqnump,$$$CurObj,0,$P(qqq," "),$P(qqq," ",2),31))'<0  ;на псевдокнопки не ходить (31 было пропущено)
+NextE1 D ..wcellsel("",$G(W("Zpos",2,"x")),"","")
+ I qq'="" D  S (W("Zpos",2,"d"),qqdat)=$P(qqdat," ",1,2)_" "_$P(qqq," "),qqy="",W("Zpos",2,"x")=qqx G NextEB
+ .I $P(qqq," ",2) D  I $L(qqw)>3 S qqx=$P(qqq," ",2)-1 Q
+ ..S qqw="" I $E($G(Vo(qqnump,$P(qqdat," ",2),$P(qqq," ",1),$P(qqq," ",2)-1)))=0 S %3=..GetPar(730,,$P(qqdat," ",2),$P(qqq," ",1),$P(qqq," ",2)-1) I %3'="",%3'<0 S qqw="ZZR" D  ;D:"045"[$E(+%3) ..wP(".T2","OnCEClick",1),..wP(,"OnCEKeyDownT",0) ;I "6789"'[%3,%3'=10,%3'=11
+ ...S %4=$E($P($G(Vo(qqnump,$P(qqdat," ",2),0,$P(qqq," ",1),$P(qqq," ",2)))," ")) I +%4'=2,+%4'=3,%4'=4 Q
+ ...S qqw="ZZR"_$E(%4,2,20)
+ .S qqw=qq,qqx=$P(qqq," ",2)
+ ;следующий объект
+ I ..EndOP() Q:$Q "" Q
+ S qq=$O(Vc(qqnump,Vc(qqnump))) I qq="" S Vc(qqnump)=$P(qqdatold," ") D ..wpoe(qqdatold,,1) Q:$Q "" Q
+ S Vc(qqnump)=qq,qqdat=qq_" "_Vc(qqnump,qq,0)_" "_0,qqo=Vc(qqnump,qq,0) D ..wpoe(qqdat,,1) S qi=0 G NextE0
+NextEB
+ D ..wM(qwin_".T2","M9",1,0,W("Zpos",2,"d"),1) ;@dol 16.02.03 ???было забыто
+ D ..wcellsel("","","",$G(qqx)) ;$G(W("Zpos",2,"x"))) ;qqx)
+ ;D ..OpenTimer(1500,"D qARM.wM("""_qwin_".T2"_""",""DoSftTreeItemClick"","""","_qqx_",+5,+1,0)") Q ""
+ ;I $E($G(Vo(qqnump,$P(W("Zpos",2,"d")," ",2),0,$P(W("Zpos",2,"d")," ",3),$G(qqx,"???"))))=6 D ..wpoe(),..wP(qwin_".FCBUT"_$G(Vt(qqnump,9,"FCBUT",$P(W("Zpos",2,"d")," ",2),$P(W("Zpos",2,"d")," ",3),qqx)),"Focused",1) Q:$Q "" Q  ;@dol 17.01.05 фокус на кнопку
+ I $G(Arg1) D ..wpoe() Q:$Q "" Q  ;@dol 14.03.03
+ I ..EditTest($$$CurObj,qqw) Q:$Q "" Q  ;запрет коррекции
+```
+
+---
+
+#### `EditText(Sender:%String,Text:%String,Button:%Integer)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+$$$FEvent
+ I $G(Vt(qqnump,"Znsp"))'="",$G(Vt(qqnump,"Znsp"))'=$ZU(5) ZN Vt(qqnump,"Znsp") ;смена NameSpace
+ ;D ..wP("MesForm","Destroy")
+ ;D ..wP("MesForm","Visible",0) ;D:$G(qxecute1)'="" ..Value(qxecute1,"X")
+ I Button'=0 Q:$Q "" Q  ;Cancel
+ D:$G(qxecute1)'="" ..Value(qxecute1,"X") Q:$Q "" Q
+```
+
+---
+
+### Navigation
+
+#### `Move(Arg1:%Library.String,Arg2:%Library.String,Arg3)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+N X54Fix,ObjM,qqcii,qqoParent,qqcVc,qqc0,qqo0 I $G($$$CurObj)="" Q   //@sasha 20081214
+ s:qqo="" qqo=$$$CurObj   //sas 20090625   
+ I $G($$$Tree),$G($$$GloRef)="" S $$$GloRef="^Q(1)" ;@Dol 15.02.09
+ i $G(Vo(qqnump,$$$CurObj,2))=1 D
+ .;;для встроенного объекта с зачеркнутым Parent sas 20090212 
+ .s qqoParent=$E($$$CurObj,3,$L($$$CurObj))
+ .i $G(Vs(qqnump,1,qqoParent))=1 i (Arg1="Down")!(Arg1="Up")  s $$$CurObj=qqoParent  Q  ;перемещение по встроенным с зачеркнутым Parent sas 20090212 
+ .S qqcii=Vc(qqnump)  F  S qqcii=$E(qqcii,1,$L(qqcii)-2) Q:qqcii=""  I $G(Vo(qqnump,Vc(qqnump,qqcii,0),2))'=1 S qqcVcold=Vc(qqnump) s Vc(qqnump)=qqcii s $$$CurObj=Vc(qqnump,Vc(qqnump),0) ;@Dol 17.06.05 перемещение по встроенным
+ .;;для встроенного объекта с зачеркнутым Parent sas 20090212 
+ .i $G(Vs(qqnump,1,qqoParent))=1 s $$$CurObj=qqoParent  ;перемещение по встроенным с зачеркнутым Parent sas 20090212 
+ S ObjM=$P($G(Vo(qqnump,-1,669))," ") I ObjM'="",$$$CurObj'=ObjM D  ;объект перемещения для скролирования (перепозиционирование на него)
+ .S qqcii=Vc(qqnump) F  S qqcii=$E(qqcii,1,$L(qqcii)-2) Q:qqcii=""  Q:Vc(qqnump,qqcii,0)=ObjM  
+ .I qqcii="" S qqcii=Vc(qqnump) F  S qqcii=$O(Vc(qqnump,qqcii)) Q:$E(qqcii,1,$L(Vc(qqnump)))'=Vc(qqnump)  Q:Vc(qqnump,qqcii,0)=ObjM
+ .I qqcii'="" S Vc(qqnump)=qqcii,$$$CurObj=ObjM ;@Dol 28.04.08 qqcii'=""
+ G @("Move"_Arg1)
+MoveBeg   ;начало
+ Q:$$$CurObj=-1
+ d X54Fixm(Vc(qqnump)) i $G(X54Fix)=1 Q     //никаких перемещений, если развернут экземпляр объекта с X54 фиксация 
+ D
+ .;;получение для встроенного объекта с зачеркнутым Parent qqcc sas 20090709
+ .i $G(Vo(qqnump,qqo,2))=1 i $G(qqoParent)'="" i $G(Vs(qqnump,1,qqoParent))=1 D Movevs S (Vs(qqnump,"Virt",qqo),qqcc)=qW.gOrder(1,$$$CurObj,"",qqc0),$$$CurObj=qqo  Q  
+ .I $D(Vt(qqnump,111)),'$D(Vt(qqnump,111,0,$$$CurObj)) N qqc0 D Movev S (Vs(qqnump,"Virt",$$$CurObj),qqcc)=qW.gOrder(1,$$$CurObj,"",qqc0) Q  ;,'$D(Vt(qqnump,111,0,$$$CurObj))
+ .D ..ObjSort()
+ .S qqcc=qW.gOrder(1,$$$CurObj,"")
+ ;;для встроенного объекта с зачеркнутым Parent выход не нужен sas 20090212
+ i ($G(Vo(qqnump,qqo,2))=1)&&($G(qqoParent)'="")&&($G(Vs(qqnump,1,qqoParent))=1) 
+ e  Q:qqc=qqcc
+ S qqpar1="",qqc=qqcc F  S qqpar1=$O(Vc(qqnump,qqpar1),1) Q:qqpar1=""  Q:$$$CurObj=Vc(qqnump,qqpar1,0)  ;в текущем дереве
+ I qqpar1'="",qqc=Vc(qqnump,qqpar1),$G(Vc(qqnump,qqpar1,1),1) S Vc(qqnump)=qqpar1 G MoveE ;существует и активен
+ D ..wcre() Q
+```
+
+---
+
+#### `Obj(curobj:%Library.String,curqqc:%Library.String,next:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I $E(curobj)="+" S next=1,curobj=$E(curobj,2,255)
+ I '$G(next),curobj=$$$CurObj Q:$Q 0 Q
+ N q,i,qqci,objref
+ I curobj=-1 S qqc="",qqo=curobj D ..wpoe("-1 -1 0") Q:$Q 1 Q
+ S qqci=Vc(qqnump) D  S:qqci'="" qqc=Vc(qqnump,qqci)
+ .I $G(curqqc)="",'$G(next) S objref=$$$ObjRef($$$CurObj) D  ;Q;@Misuno 28.11.06  надо продолжиь поиск
+ ..I ","_objref_","'[(","_curobj_",") S qqci="" Q
+ ..F  S qqci=$E(qqci,1,$L(qqci)-2) Q:Vc(qqnump,qqci,0)=curobj
+ .i $G(curqqc)="",'$G(next),qqci'="" q       ;@Misuno 28.11.06 выход, если наден экземпляр
+ .i $G(curqqc)="",qqci="",","_objref_","[(","_curobj_",") q        ;@Misuno 28.11.06 выход, если экземпляр не найден, но он в дереве, иначе поиск в других деревьях
+ .F  S qqci=$O(Vc(qqnump,qqci))  Q:qqci=""  I Vc(qqnump,qqci,0)=curobj Q:$G(next)  I $S($G(curqqc)="":1,1:Vc(qqnump,qqci)=curqqc) Q
+ I qqci="" Q:$Q 0 Q
+ S qqo=curobj,Vc(qqnump)=qqci D ..wpoe(qqci_" "_curobj_" 0") Q:$Q 1 Q
+ ;;;;;;;;;;; было так, исправил @Misuno 24.11.06
+ .I $G(curqqc)="",'$G(next) S objref=$$$ObjRef($$$CurObj) D  Q
+ ..I ","_objref_","'[(","_curobj_",") S qqci="" Q
+ ..F  S qqci=$E(qqci,1,$L(qqci)-2) Q:Vc(qqnump,qqci,0)=curobj
+ .F  S qqci=$O(Vc(qqnump,qqci))  Q:qqci=""  I Vc(qqnump,qqci,0)=curobj Q:$G(next)  I $S($G(curqqc)="":1,1:Vc(qqnump,qqci)=curqqc) Q
+ .Q:qqci'=""  Q:$G(next)  F  S qqci=$O(Vc(qqnump,qqci))  Q:qqci=""  I Vc(qqnump,qqci,0)=curobj,$S($G(curqqc)="":1,1:Vc(qqnump,qqci)=curqqc) Q
+ ;;;
+ .I $G(curqqc)="",'$G(next) S objref=$$$ObjRef($$$CurObj) D  ;Q;@Misuno 28.11.06  надо продолжиь поиск
+ ..I ","_objref_","'[(","_curobj_",") S qqci="" Q
+ ..F  S qqci=$E(qqci,1,$L(qqci)-2) Q:Vc(qqnump,qqci,0)=curobj
+ .i $G(curqqc)="",'$G(next),qqci'="" q       ;@Misuno 28.11.06 выход, если наден экземпляр
+ .i $G(curqqc)="",qqci="",","_objref_","[(","_curobj_",") q        ;@Misuno 28.11.06 выход, если экземпляр не найден, но он в дереве, иначе поиск в других деревьях
+ .F  S qqci=$O(Vc(qqnump,qqci))  Q:qqci=""  I Vc(qqnump,qqci,0)=curobj Q:$G(next)  I $S($G(curqqc)="":1,1:Vc(qqnump,qqci)=curqqc) Q
+```
+
+---
+
+#### `Fix(Arg1:%String,Arg2:%String=0,Arg3:%String,Arg4:%Library.String,NoMes:%Library.String,Nopos:%Library.String,Stat:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I $D(Vt(qqnump,111)),$D(Vc(qqnump))>1,'$D(Vt(qqnump,111,0,$$$CurObj)) D ..Virt(1) ; ;@dol 6.03.03 для виртуальных
+ ;.N qqob,qqobi S qqob=$G($$$ObjRef($$$CurObj)) I qqob'="" F qqobi=$L(qqob,","):-1:1 I $G(Vo(qqnump,$P(qqob,",",qqobi),2)) S Vs(qqnump,"Virt",$P(qqob,",",qqobi))=Vc(qqnump,$E(Vc(qqnump),1,qqobi*2))
+ ;.S qqc0=$S($L(qqob,",")=1:"",1:Vc(qqnump,$E(Vc(qqnump),1,$L(qqob,",")-1*2)))
+ N qqot1
+ I $G(Arg1)="" Q:$G(Vs(qqnump,7))=""&$Q "" Q:$G(Vs(qqnump,7))=""  D   D:$G(W("Zsform"))'=11 ..wP(qwin_".TBG.b3","Down",0) S qqot1=..GetPar("X1668") X:qqot1'="" qqot1 Q:$Q "" Q
+ .K Vs(qqnump,17) ;признак жесткой фиксации
+ .S Vs(qqnump,7)="" D
+ ..I $G(Vs(qqnump,"7stat"))="" S $P($$$CondFind," ",10,11)="" Q
+ ..;S qqc=$P(Vs(qqnump,"7stat"),$C(0),4),$$$CurObj=$P(Vs(qqnump,"7stat"),$C(0),3)
+ ..;sas 20090722 криво работала свертка объектов 3 уровня с типом свернутости фиксация
+ ..S qqc=$P(Vs(qqnump,"7stat"),$C(0),2),$$$CurObj=$P(Vs(qqnump,"7stat"),$C(0),1)
+ ..S $$$CondFind=$P(Vs(qqnump,"7stat"),$C(0),7) I $P($$$CondFind," ",1)'="" K W($P($$$CondFind," ",1))
+ ..;M Vs(qqnump,7)=Vs(qqnump,"7stat")
+ ..S Vs(qqnump,7)=$P(Vs(qqnump,"7stat"),$C(0),5) S:$P(Vs(qqnump,"7stat"),$C(0),6) Vs(qqnump,17)=1 I $D(Vc(qqnump))>1 D ..Estat() K Vc(qqnump),Vs(qqnump,2,$P(Vs(qqnump,"7stat"),$C(0),1))
+ .D ..wfot(Vs(qqnump,7)) I '$G(Arg4) D ..wcre(,,$G(Vs(qqnump,"7stat"))'="") I $G(Vs(qqnump,"7stat"))'="" D ..wpoe(,,,,$P(Vs(qqnump,"7stat"),$C(0),1),$P(Vs(qqnump,"7stat"),$C(0),2))
+ I $G(Stat) D  ;запомнить текущее остояние
+ .K Vs(qqnump,"7stat") ;M Vs(qqnump,"7stat")=Vs(qqnump,7)
+ .S Vs(qqnump,"7stat")=$$$CurObj_$C(0)_$$$ID_$C(0)_$G(Vc(qqnump,"AA",0))_$C(0)_$G(Vc(qqnump,"AA"))_$C(0)_$G(Vs(qqnump,7))_$C(0)_$G(Vs(qqnump,17))_$C(0)_$$$CondFind
+ K Vs(qqnump,17)
+ K Vs(qqnump,7)
+ ;??????????S:'$D(Vo(qqnump,Arg1,0)) Vo(qqnump,Arg1,0)=$$$ObjLget(Arg1) ;@Dol 28.07.05 - фиксация по отсутствующему
+ ;S:Arg2 Vs(qqnump,17)=1
+ I '$$$Tree,$$$ObjLqqc(Arg1)'=255,$L(qqc)<$$$ObjLqqc(Arg1) S qqot1=qW.gOrder(1,Arg1,"",qqc) D  I qqot1="" D:'$G(NoMes) ..Message("Фиксация невозможна. qqo="_Arg1_" qqc="_qqc_" Отображение "_Vo(qqnump)) Q:$Q "" Q
+ .I qqot1="",$G(Vo(qqnump,Arg1,87)) S qqot1=qqc_" " ;@Dol 6.08.06 фиксация на несуществующем при установленном выводе отсутствующих (пока без контроля и учета выражения)
+ .S:qqot1'="" qqc=qqot1
+ S:Arg2 Vs(qqnump,17)=1
+ I $$$CurObj'=Arg1 D
+ .;I $$$Tree S $$$CurObj=Arg1 Q
+ .I $$$CurObj="" S $$$CurObj=Arg1 Q
+ .I "_,"_$G($$$ObjRef($$$CurObj))_","'[(","_Arg1_",") S $$$CurObj=Arg1 Q
+```
+
+---
+
+#### `Expand1(Arg1:%Library.String,Arg2:%Library.String,Arg3:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+;;;I $G(Vo(qqnump,qqo,4))=4 D ..Fix($S($G(Vs(qqnump,7))=qqo:"",1:qqo),1,,,,,1) Q:$Q "" Q  ;@Dol 02.03.08 фиксация
+ I $G(Vt(qqnump,"Expand"))'="",$P(Vt(qqnump,"Expand")," ")'=$E(Arg1,1,$L($P(Vt(qqnump,"Expand")," "))) D
+ .;есть развернутый, который нужно свернуть
+ .;D Expand10($P(Vt(qqnump,"Expand")," "))
+ .N qqci,qqi,qqq S qqq=$P(Vt(qqnump,"Expand")," ") F qqi=$L(qqq):-2:2 S qqci=$E(qqq,1,qqi) I $G(Vc(qqnump,qqci,40))=1,$G(Vo(qqnump,Vc(qqnump,qqci,0),4))<3,Arg1'=qqci D Expand10(qqci)
+ N qqstat S qqstat=$G(Vc(qqnump,Arg1,40)) I $G(Vc(qqnump,Arg1,40))=-1||($G(Vc(qqnump,Arg1,40))=0) D Expand11(Arg1) Q:$Q "" Q
+ I $G(Vc(qqnump,Arg1,40))=1 D Expand10(Arg1) Q:$Q "" Q
+ I $P($G(Vt(qqnump,"Expand"))," ")=Arg1 D Expand10(Arg1) Q:$Q "" Q
+ D Expand11(Arg1) Q:$Q "" Q
+ ;
+Expand10(qqci)  ;cвернуть объект
+ K Vt(qqnump,"Expand") I $G(Vo(qqnump,$G(Vc(qqnump,qqci,0),9999),4))=4 S Vs(qqnump,"7stat")=$G(Vs(qqnump,"7statObj",Vc(qqnump,qqci,0))) D ..Fix("") Q
+ D ..wM(qwin_".T2","M9",1,0,qqci_" "_Vc(qqnump,qqci,0)_" 0","",0) ;D:0 ..wP(,"M4","p0","",0,0) 
+ S Vc(qqnump,qqci,40)=0 D ..wcellpic(Vc(qqnump,qqci,0),0,0,qqci)
+ D:$D(Vt(qqnump,9,"FCBUT")) ..wM(qwin,"Vol_ArrayElementPaint") ;..wwwwFCBUT(1)
+ D  ;@dol 10.1.04 правило проверки и для свертки
+ .N qqver S qqver=..GetPar(74,,Vc(qqnump,qqci,0),0,0) Q:qqver=""  Q:$E(qqver)?1N  S qqver=..Value(qqver)
+ ;S Vc(qqnump,qqci,40)=0
+ Q
+Expand11(qqci)  ;развернуть объект (@Dol 15.02.07 - wpoe почему-то вызывается дважды????)
+ N qqq I $G(Vo(qqnump,$G(Vc(qqnump,qqci,0),9999),4))=4 S qqq=Vc(qqnump,qqci,0),Vs(qqnump,2,qqq)=1 S Vc(qqnump,qqci,40)=1 D ..Fix(Vc(qqnump,qqci,0),1,,,,,1) S Vs(qqnump,"7statObj",qqq)=Vs(qqnump,"7stat") S qqci=Vc(qqnump),Vc(qqnump,qqci,40)=1 G Expand11e
+ S qqq=qqci_" "_Vc(qqnump,qqci,0)_" 0"
+ I $G(Vc(qqnump,qqci,40))=-1 Q:..EndOP()  D ..wqqotree(qqci,,,1,1,,,0) D:0 ..wM(qwin_".T2","M9",1,0,qqq),..wP(,"M4","p1","",0,0) S Vc(qqnump,qqci,40)=1 I 1  ;@dol 13.05.03 ..EndOP
+ E  D
+ .D ..wM(qwin_".T2","M9",1,0,qqq,"",2) D:0 ..wP(,"M4","p1","",0,0) S Vc(qqnump,qqci,40)=1 D ..wcellpic(Vc(qqnump,qqci,0),0,0,qqci) ;S:$G(Vc(qqnump,qqci,40))=0 Vc(qqnump,qqci,40)=1
+ .N qqcii S qqcii=qqci F  S qqcii=$O(Vc(qqnump,qqcii)) Q:$E(qqcii,1,$L(qqci))'=qqci  D:$G(Vc(qqnump,qqcii,40))=0 ..wM(qwin_".T2","M9",1,0,qqcii_" "_Vc(qqnump,qqcii,0)_" 0","",0)
+ S:$G(Vo(qqnump,$G(Vc(qqnump,qqci,0)),4))'=3 Vt(qqnump,"Expand")=qqq
+ I $D(Vt(qqnump,9,"FCBUT")),qqstat'=-1 D ..wM(qwin,"Vol_ArrayElementPaint") ;..wwwwFCBUT(1)
+Expand11e S qqq=1 D  ;@dol 1.08.03 правило проверки (для перехода или выполнения некоторого действия
+ .N qqver,qNx D  Q:qqver=0
+```
+
+---
+
+#### `wpoe(qqpar1:%String,Beg:%Library.String,NoSelCel:%Library.String,Capt:%Library.String,curobj:%Library.String,curqqc:%Library.String,curqqw)`
+
+**Returns:** `%String`
+
+**Implementation:**
+
+```objectscript
+I $G(Capt) S:$G(qqpar1)="" qqpar1=" "_$S($G($$$CurObj)'=""&&$D(Vo(qqnump,$$$CurObj)):$$$CurObj,1:$O($$$MObjRef("")))_" 0" Q:$P(qqpar1," ",2)=""  S $$$CurObj=$P(qqpar1," ",2),($$$ID,qqc)="" G wpoeCapt
+ I $G(curobj)'="" D  I $G(qqpar1)="" Q:$Q "" Q  ;@dol 15.02.07 !!!было D:$G(curobj)'=""
+ .N qqci S qqci="" F  S qqci=$O(Vc(qqnump,qqci))  Q:qqci=""  I Vc(qqnump,qqci,0)=curobj,$S($G(curqqc)="":1,1:Vc(qqnump,qqci)=curqqc) Q
+ .I qqci'="" S qqpar1=qqci_" "_curobj_" 0" Q
+ .I $G(Vc(qqnump))'="",$G(Vc(qqnump,Vc(qqnump),0))'="" S qqpar1=Vc(qqnump)_" "_Vc(qqnump,Vc(qqnump),0)_" 0" ;@Dol 26.08.05
+ S:$G(qqpar1)="" qqpar1=$G(W("Zpos",2,"d"))
+ S W("Zpos",2,"d")=qqpar1 ;qqpar1=qqci qqo qqso
+ S:$P(qqpar1," ")'="" Vc(qqnump)=$P(qqpar1," ") ;********@dol 19.07.04 раньше не НЕ БЫЛО. ???Неприятности с принудительным позиционированием????
+ S $$$CurObj=$P(qqpar1," ",2),($$$ID,qqc)=$S($P(qqpar1," ")="":"",1:$G(Vc(qqnump,$P(qqpar1," "))))
+ ;S qqo=$$$CurObj ;@Dol 11.10.106 ?нельзя
+ I $D(Vt(qqnump,111)),$P(qqpar1," ",2)'=-1 D ..Virt(1)
+ D:'$G(NoObj)
+ .I $G(W("Zsform"))#10'=1,$$$CurObj'="" D  ;счетчики
+ ..I $G(Vo(qqnump,$$$CurObj,2))<3 S %3=$S($E($$$CurObj)'="v":$$$CurObj,1:$E($$$CurObj,3,255)),%2=$G(Vo(qqnump,%3,247)) S:%2'="" %2=$S('$D(Vo(qqnump,$P(%2," "))):"",1:$P(%2," ")) S %2=$J($S(%2="":+$G(^Q(1,%3)),1:"*"_+$G(^Q(1,%2,$E(qqc,1,$$$ObjLget(%2)),"McO"_%3))),7) ;@Dol 9.10.07 для счетчиков поддеревьев
+ ..D ..wP(qwin_$S($G(W("Zsform"))<100:".TBN",1:".T1.TBN")_".b41","Caption",$J(+$G(^Q($$$Relind_qview,$$$CurObj)),7))
+ ..D ..wP(qwin_$S($G(W("Zsform"))<100:".TBN",1:".T1.TBN")_".b40","Caption",$S($G(Vo(qqnump,$$$CurObj,2))<3:%2,Vo(qqnump,$$$CurObj,2)=4:$J($P($G(@("^"_$$$CurObj))," ",2),7),Vo(qqnump,$$$CurObj,2)=6:$S($E($G(Vo(qqnump,$$$CurObj,33),"@"))="@":"",1:$J($G(@(Vo(qqnump,$$$CurObj,33))),7)),1:"")) ;@Dol 14.08.06 для массивов (6);%2=$J($G(^Q(1,$S($E($$$CurObj)'="v":$$$CurObj,1:$E($$$CurObj,3,255)))),7)
+ .D ..wP(qwin_".T1","MultiSelect",0)
+ .D ..wM(qwin_".T1","M9",1,0,$P(qqpar1," ",2),1) ;отметка объекта
+ I $G(Beg),$S($$$CurObj="":0,$G(Vo(qqnump,-1,61))'=1!1:1,$G(Vo(qqnump,$$$CurObj,4)):$P($G(Vt(qqnump,"Expand"))," ")'=$P(qqpar1," ")!(Beg=2),1:1) D  ;,Vo(qqnump,-1,61)'=3 D  ;попытка установить видимость всего поддерева
+ .S %2=$O(Vc(qqnump,$P(qqpar1," ")_"яя"))
+ .I %2="" S %2=$O(Vc(qqnump,""),-1) Q:%2=$P(qqpar1," ")  Q:%2=""
+ .S %3=0 F %4=$L(%2)-2:-2:2 I $G(Vo(qqnump,Vc(qqnump,$E(%2,1,%4),0),4)) S %3=$S("15"[(+$G(Vo(qqnump,-1,61))):$P($G(Vt(qqnump,"Expand"))," ")'=$P(qqpar1," "),1:1) Q:%3  ;@dol 19.12.02 - лишняя развертка последнего свернутого
+ .Q:%3  D ..wM(qwin_".T2","M9",1,0,%2_" "_$G(Vc(qqnump,%2,0))_" 0",1)
+ I $$$CurObj'="",$D(Vo(qqnump,$$$CurObj,11,"@ZXXPntr")),qqpar1'="" D ..wM(qwin_".T2","M8",$P(Vo(qqnump,$$$CurObj,11,"@ZXXPntr")," ",2)),..wwww("@ZXXPntr") ;@Dol 24.08.05 вывод указателя;@Dol 20.04.07 переставлена строка
+ D:qqpar1'=""
+ .D:$G(Vt(qqnump,9,"PPd"))'=""  ;@Dol 03.03.08 удаление картинок в старой текущей строке
+ ..D ..wM(qwin_".T2","M9",1,0,Vt(qqnump,9,"PPd")) S %2=$P(Vt(qqnump,9,"PPd")," ",1),%3=$P(Vt(qqnump,9,"PPd")," ",2),%4=$P(Vt(qqnump,9,"PPd")," ",3),%5="" F  S %5=$O(Vt(qqnump,9,"PPd",%3,%4,%5)) Q:%5=""  D ..wP(,"M4","","",%5,0)
+ ..S Vt(qqnump,9,"PPd")=""
+ .I $P(qqpar1," ")="AA" Q:'$D(Vc(qqnump,"AA"))  ;@Dol 17.12.07 
+ .D ..wM(qwin_".T2","M9",1,0,qqpar1,$S($G(Vo(qqnump,$$$CurObj,19))'="":$S("035"[(+$G(Vo(qqnump,$$$CurObj,19))):1,1:$S(Vo(qqnump,$$$CurObj,19)=2||(Vo(qqnump,$$$CurObj,19)=4):2,$G(W("Zpos",2,"x"))="":2,$E($G(Vo(qqnump,$P($G(W("Zpos",2,"d"))," ",2),0,$P($G(W("Zpos",2,"d"))," ",3),+$G(W("Zpos",2,"x"))))):3+$G(W("Zpos",2,"x")),1:2)),"035"[(+$G(Vo(qqnump,-1,19))):1,1:$S(Vo(qqnump,-1,19)=2||(Vo(qqnump,-1,19)=4):2,$G(W("Zpos",2,"x"))="":2,$E($G(Vo(qqnump,$P($G(W("Zpos",2,"d"))," ",2),0,$P($G(W("Zpos",2,"d"))," ",3),+$G(W("Zpos",2,"x"))))):3+$G(W("Zpos",2,"x")),1:2))) ;отметка экземпляра @dol 12.08.03 отметка ячейки;@Dol 27.10.06 $G(Vo(qqnump,$$$CurObj,19))- для объекта
+```
+
+---
+
+### Display
+
+#### `wcre(Arg1:%String,Arg2:%Library.String,Nopos:%Library.String,opobj:%Library.String,qqFwgre:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+;;@Dol 30.10.07 ??;I '$G(Arg1) d ..wP("-qARM","Cursor",-11) ;D ..Wait("D qARM.wcre(1)") Q
+ ;;D ..wP(qwin,"BulkUpdate",1) ;?может D:$G(qwin(qwin,"child"))=""
+ D ..wP(qwin_".T2","BulkUpdate",1)
+ D ..wM(qwin_".T2","Clear"),..wM(,"ClearItemPictures"),..wM(,"ClearRowHeaderPictures")
+ S:$G(Vt(qqnump,9,"PPd"))'="" Vt(qqnump,9,"PPd")="" ;@Dol 03.03.08 сброс указателя картинок текущей строки
+ D:$D(qwin(qwin,"FCBUT")) ..ButtonDestr()
+ I $G(W("ZBtredo"))'=$G(W("ZBtred")) D ..wgre() S W("ZBtredo")=W("ZBtred") I $G(W("ZoBLeV")) D qARM.wP(qwin_".T2","GuaranteedItemLevel",$G(W("ZoBLeV"))) ;автоматический вызов переинициализации (не учетен переход/перестройка отображения)
+ ;S qql=$S($$$ReFind:$$$Relind_qview,1:1) ;раньше нигде не устанавливалась
+ I $G($$$CurObj)'="" S:'$D(Vo(qqnump,$$$CurObj,38)) Vo(qqnump,$$$CurObj,38)=..GetPar("X538",,$$$CurObj) I Vo(qqnump,$$$CurObj,38)'="" N qqwavto,qqavto D  Q:$G(qqavto)=999  ;обработка автосортировки
+ .S qqwavto=$P(Vo(qqnump,$$$CurObj,38)," ") Q:qqwavto=""  Q:qqwavto=$P($G($$$CondFind)," ")  S qqavto=$P($G(Vo(qqnump,$$$CurObj,11,qqwavto))," ",2) Q:qqavto=""
+ .;D:$D(Vc(qqnump))>1 ..wM(qwin_".T2","SetFocus") ;только если не начальный вывод окна
+ .D ..wbut(2,qqavto,1)
+ .D ..T2ColHButton(qqavto,qqwavto) S qqavto=999
+ I $D(Vc(qqnump))>1 D ..Estat($G(opobj)) ;сохраним текущее состояние свертки-развертки экземпляров (отработает в qW.gForm )
+ K W("@Znum") D qW.gForm(qql,$G($$$CurObj),$G(qqc))
+ D:$G(Vs(qqnump,99,"Pic"),$E(qqRES,3)) ..wpic(1) ;@dol 2.11.02 Если картинки есть, и их вывод явно не запрещен - они выводятся
+ I $D(Vc(qqnump))>10 D:$G(W("ZotSt")) ..wP(qwin_".T2","LabelPictureH@1","Red0",0,0)
+ I $G(W("ZoBLeV")),$S($D(qqflg240):1,1:'$G(qqXBwids)) D ..wM(qwin_".T2","M2",-1,"",W("ZoBLeV"),"00",0) ;чтобы был отступ для бланка @dol 19.03.03 строка заданного уровня (чтобы не дергался экран)
+ I $G(W("Zpos",2,"x"))'="" D ..wcellsel(,W("Zpos",2,"x"))
+ ;sas 20090626
+ ;K W("Zpos",2,"y")  ;;,W("Zpos",2,"x") 20061027 Sasha указатель курсора не отставался при переходе на след экземпляр или перевывод ;"d" нужно оставить, чтобы после перевывода встать на прежнюю строку объекта
+ I $D(Vs(qqnump,2,-1)) D  ;есть свернутые объекты
+ .N qqci,qqo S qqo="" F  S qqo=$O(Vs(qqnump,2,-1,qqo)) Q:qqo=""  S qqci="" F  S qqci=$O(Vs(qqnump,2,-1,qqo,qqci)) Q:qqci=""  D:$G(Vc(qqnump,qqci,40))'=1 ..wM(qwin_".T2","M9",1,0,qqci_" "_qqo_" 0","",0)
+ K:'$G(Nopos) Vs(qqnump,2)
+ I $G(Vc(qqnump))="" S Vc(qqnump)="AA" I '$D(Vc(qqnump,"AA")) N qqso0 S qqso0=$O(Vo(qqnump,-1,0,0)) I $S(qqso0="":1,1:$D(Vo(qqnump,-1,0,qqso0))<10) D ..wpoe(,,,1) G wcreend ;нет постоянных строк
+ ;@Pav 29.06.2009
+ ;D:'$G(Nopos) ..wpoe($S('$D(Vc(qqnump,Vc(qqnump))):-1,1:$G(Vc(qqnump),-1))_" "_$G(Vc(qqnump,Vc(qqnump),0),-1)_" "_$S($G(Vc(qqnump,Vc(qqnump),0))=$P($G(W("Zpos",2,"d"))," ",2):+$P($G(W("Zpos",2,"d"))," ",3),1:0)) ;,1) ; ,1) Beg=1 - видимость текущей строки
+ ;I '$G(Nopos) {
+ ;        ;Если указан экземпляр позиционирования
+ ;        ;D:$d(Vs(qqnump,22)) qARM.Wait("d:$g(qqnump)="""" qARM.crst(,"_qqnump_",2) s ^AA=qqnump d:$d(Vs(qqnump,22)) qARM.wpoe(,,,,$p(Vs(qqnump,22),""~""),$p(Vs(qqnump,22),""~"",2)) d:$p(Vs(qqnump,22),""~"",3)'="""" qARM.NextEdit(""-""_$p(Vs(qqnump,22),""~"",3),$s($p(Vs(qqnump,22),""~"",4)=1:"""",1:1)) k Vs(qqnump,22)")
+```
+
+---
+
+#### `wwrefr(qqo:%Library.String,qqc:%Library.String,rel:%Library.String,par)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+N qqci,qstr,qiii,qqz,qqff,qiiii,end,qqso
+ I ..EndOP(1) Q:$Q 0 Q
+ ;;;;;;;D ..wP(qwin,"BulkUpdate",1)
+ D ..wP(qwin_".T2","BulkUpdate",1)
+ I $G(rel)'=1 D:$D(qwin(qwin,"FCBUT")) ..ButtonDestr()
+ S qqo=$G(qqo) D:qqo=-1||(qqo="")   ;перевывод вершины
+ .N qqo,qqc S qqci=-1,qqo=-1,qqc="",qqso=0 F  S qqso=$O(Vo(qqnump,-1,0,qqso)) Q:qqso=""  I $P($G(Vo(qqnump,-1,0,qqso))," ")="",$G(Vs(qqnump,1,-1,qqso))'=2 D wwwrefrS
+ I qqo'=-1 S qqci="" F  S qqci=$O(Vc(qqnump,qqci)) Q:qqci=""  D  Q:qqci=""
+ .I $G(qqo)="" D wwwrefrW(qqci,Vc(qqnump,qqci,0),Vc(qqnump,qqci)) Q
+ .Q:qqo'=Vc(qqnump,qqci,0)  I $G(qqc)="" D wwwrefrW(qqci,qqo,Vc(qqnump,qqci)) Q
+ .I qqc=Vc(qqnump,qqci) D wwwrefrW(qqci,qqo,qqc) S qqci=""
+ I $G(rel)'=1 D ..wwwwZXXadd(-1) ;@Dol 21.05.08 -1
+ D ..wP(qwin_".T2","BulkUpdate",0,1)
+ I $G(end),$G(Vs(qqnump,99,"Pic"),$E(qqRES,3)) D ..wpic(1) ;с картинками пока криво - перевыводятся ВСЕ
+ I $G(rel)'=1 D:$D(Vt(qqnump,9,"FCBUT")) ..wwwwFCBUT()
+ I $G(rel)'=-1,$G(Vo(qqnump,-1,88))'=1,'$G(Vo(qqnump,-1,80)),$G(Vo(qqnump,-1,194))'="" D ..wP(qwin_".T2","RowColPictureH@1",$P(Vo(qqnump,-1,194)," ",''$$$RelNum+1),0) ;@Dol 14.07.08 заголовок колонки релевантных
+ ;;;;;;D ..wP(qwin,"BulkUpdate",0)
+ Q:$Q +$G(end) Q
+wwwrefrW(qqci,qqo,qqc)
+ S qqo=Vc(qqnump,qqci,0),qqc=Vc(qqnump,qqci)
+ I $G(Vo(qqnump,qqo,2))<3,qqc'[" " S Vc(qqnump,qqci,5)=$G(^Q(1,$S($E(qqo)="v":$E(qqo,3,255),1:qqo),qqc,"X")) ;@Dol 13.03.06 qqtime
+ S qqso="" F  S qqso=$O(Vc(qqnump,qqci,11,qqso)) Q:qqso=""  D wwwrefrS
+ Q
+wwwrefrS
+ D ..wM(qwin_".T2","M9",1,0,qqci_" "_qqo_" "_qqso)
+ I $G(rel)'=-1,qqo'=-1,'qqso,'$G(Vo(qqnump,qqo,244)) D  ;пересчет отметки релевантных
+ .S Vc(qqnump,qqci,2)=''$D(^Q($$$Relind_qview,qqo,qqc))  ;А ссылочные ?????
+ .D:$G(Vo(qqnump,-1,194))'="" ..wP(,"M5",$S($G(Vo(qqnump,-1,821))'="":$P(Vo(qqnump,-1,194)," ",''qW.GG(qqo,Vo(qqnump,-1,821),qqc)+1),1:$P(Vo(qqnump,-1,194)," ",''$G(Vc(qqnump,qqci,2))+1)),"",0) ;@Dol 21.08.08 821
+ .;$S(qqso:"",$G(Vo(qqnump,qqo,244)):"",'$G(Vc(qqnump,qqciobj,1),1):"",$G(Vo(qqnump,-1,194))="":"",'$G(Vc(qqnump,qqciobj,2)):$P(Vo(qqnump,-1,194)," ",1),1:$P(Vo(qqnump,-1,194)," ",2))
+ I $G(rel)=1 Q:'$D(Vo(qqnump,qqo,11,"ZTMPN"))  D qARM.wwww("ZTMPN",,,qqo,qqc) Q  ;@Dol 14.07.08
+```
+
+---
+
+#### `wwww(qqpar1:%String,Arg1:%String,p31:%Library.String,curobj:%Library.String,qqc:%Library.String,qqnumpo:%Library.String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I $G(qqnumpo)'="" Q:'$D(qwin("Q"_qqnumpo))  N qqnumpT S qqnumpT=qqnump,qqnump=qqnumpo,qwin="Q"_qqnump  ;@Dol 24.07.09 !!! N qqnumpT 
+ I qqpar1="" Q:$Q "" Q  ;S $ET="S ^Err=$ZE"
+ N %1 N qqilst,qqw,q,i,qqci,qqc0,curobjD,qflag S:$G(qqc)'="" qqc0=qqc S curobjD=$D(curobj)
+ I $G(curobj)="",$G(qqc)="" S curobj=$G($$$CurObj),qqci=$S(curobj=-1:"-1",1:$G(Vc(qqnump))),qqc=$S(qqci="":"",1:$G(Vc(qqnump,qqci)))
+ S:curobj="" curobj=-1 S:curobj=-1 qqci=-1
+ I curobj'=$$$CurObj!($G(qqc0)'=""),curobj'=-1 S qqci=Vc(qqnump) D  S:qqci'="" qqc=Vc(qqnump,qqci) I $G(qqci)="",curobjD Q:$Q "" Q  ;@Dol 24.02.10 если задан объект и он не найден, ничего не надо выводить
+ .I $G(qqc)="" S %3=$$$ObjRef($$$CurObj) I ","_%3[(","_curobj_",") D  Q:qqci'=""  ;@dol 29.5.04 было _%3_","
+ ..F  S qqci=$E(qqci,1,$L(qqci)-2) Q:qqci=""  Q:Vc(qqnump,qqci,0)=curobj
+ .S qqci="" F  S qqci=$O(Vc(qqnump,qqci))  Q:qqci=""  I Vc(qqnump,qqci,0)=curobj,$S($G(qqc)="":1,1:Vc(qqnump,qqci)=qqc) Q
+ S:$G(qqci)="" qqci=Vc(qqnump)
+ N qqo S qqo=curobj ;@oleg 9.01.03
+ I qqpar1["*" D  ;@dol 6.03.03 формирование списка всех выводимых выражений и обобщений
+ .N x,y,z S y="",z="" F  S y=$O(Vo(qqnump,qqo,0,y)) Q:y=""  S x="" F  S x=$O(Vo(qqnump,qqo,0,y,x)) Q:x=""  D
+ ..S qqw=Vo(qqnump,qqo,0,y,x) Q:'qqw  ;Q:$E(qqw)>5
+ ..I +qqw=5 S z=z_" Zs"_y_"c"_x Q
+ ..I $E(qqw,2)="@" S z=z_" "_$E(qqw,2,255)
+ .S qqpar1=$P(qqpar1,"*")_z_$P(qqpar1,"*",2,255)
+ ;D:$G(p31) ..wM("-qARM","ClearCache") ;@Dol 23.01.09 очистка кэша картинок (будут пересоздаваться все графические объекты) ; @dima 20091020 не используется
+ F qqilst=1:1:$L(qqpar1," ") S qqw=$P(qqpar1," ",qqilst) D:qqw'=""
+ .I qqw?1.N D:'$G(Arg1) ..Message("wwww="_qqw) Q
+ .I $E(qqw,1,2)="Zs",$S(qqw?1"Zsc"1.3n:1,qqw?1"Zs"1.3n1"c"1.3n:1,1:0)  D  Q  ;@Dol 4.10.06 контроль Zsc* Zs*c*
+ ..I $E(qqw,1,3)="Zsc" S Vt(qqnump,"Zsc",+$P(qqw,"c",2))=1 D ..wP(qwin_".T2","ColumnText",$P($G(W(qqw)),"~"),+$P(qqw,"c",2)) D ..wP(,"ToolTipColumnE",$P($G(W(qqw)),"~",2),+$P(qqw,"c",2)) Q  ;@dol 4.02.03 Z-понятия заголовков;30.10.09 Подсказки
+ ..S %3=$G(Vo(qqnump,curobj,0,+$P($E(qqw,3,5),"c"),+$P(qqw,"c",2))) Q:%3=""  I $G(Vc(qqnump,qqci,40))=-1,$P($E(qqw,3,5),"c") Q  ;@dol 19.11.03 свернут но не выведен
+ ..Q:"05"'[$E(%3)  I $G(Vs(qqnump,1,curobj)) Q  ;не выводить зачеркнутые объекты
+ ..I $G(Vs(qqnump,1,curobj,+$P($E(qqw,3,5),"c"),+$P(qqw,"c",2))) S %3=+$P($E(qqw,3,5),"c")_" "_(+$P(qqw,"c",2)) D wwwwDel Q  ;@Dol 22.04.08 удаление зачеркнутых
+ ..I $E(%3)=5 S %3=..Value($E(%3,2,30000)) D  I 1
+ ...I $G(Vo(qqnump,curobj,0,+$P($E(qqw,3,5),"c"),+$P(qqw,"c",2),10))=1,%3?8N S %3=qW.GtoExt(1,%3) Q  ;@dol 23.08.03 выражение-дата
+ ...S:$G(Vo(qqnump,-1,66)) %3=$TR(%3,"_"," ")  ;@dol 27.05.04
+ ..E  S %3=$E(%3,2,30000),%3=$S(%3="@":..GetName("",curobj),$E(%3)="@":..GetName("",curobj,$E(%3,2,30)),1:%3)
+ ..I $G(Vo(qqnump,-1,65))=2,$TR(%3,"~")="" S %3=$S(%3="":" ",%3="~":"",1:%3)  ;@dol 16.1.04
+```
+
+---
+
+#### `wpic(qqpar1:%String,qqty0:%String)`
+
+**Returns:** `nothing`
+
+**Implementation:**
+
+```objectscript
+I '$D(Vt(qqnump,9,"P")) D:0 ..Message("Нет картинок") Q:$Q "" Q
+ I '$G(qqpar1) D ..wM(qwin_".T2","ClearCellPictures") Q:$Q "" Q  ;не очень хорошо для режима редактирования (исчезнут указатели развертки)
+ ;qql - ?????
+ N qqobim,qqpic,qqc,qqci,qqo,qqw,qqzS,qclr,qal,qqty
+ I '$$$Tree N qql S qql=1
+ E  N qqRef,qqref S qqRef=$G($$$GloRef)
+ S qqobim=1,qqty=$S($G(qqty0)="":"",1:$O(Vt(qqnump,9,"P",qqty0),-1)) F  S qqty=$O(Vt(qqnump,9,"P",qqty)) Q:$S(qqty="":1,$G(qqty0)="":0,1:qqty0'=qqty)   S qqci="" D:$P(qqty," ")=-1  I $P(qqty," ")'=-1 F  S qqci=$O(Vc(qqnump,qqci)) Q:qqci=""   I Vc(qqnump,qqci,0)=$P(qqty," ") D
+ .I $P(qqty," ",1)'=-1,$P(qqty," ",2),$G(Vc(qqnump,qqci,40))=-1 Q  ;@dol 5.5.04 объект свернут
+ .S qqo=$P(qqty," ",1),qqpic=Vo(qqnump,qqo,0,$P(qqty," ",2),$P(qqty," ",3),6) S:$E(qqpic)="-" qqpic=$E(qqpic,2,30000)
+ .S qqw=$E(Vo(qqnump,qqo,0,$P(qqty," ",2),$P(qqty," ",3)),2,255)
+ .I $G($$$Tree),qqci'="" D qW.qRef(qqci)
+ .S qqc=$S(qqci="":"",1:Vc(qqnump,qqci)) I "M,F,R,"'[$E(qqpic,1,2) S:$G(Vo(qqnump,qqo,41)) qqc=$P(qqc,"~",$E(qqw,1,2)),qqw=$E(qqw,3,30000) S qqpic=..Value($S($E(qqpic)'="@":qqpic,1:$E(qqpic,2,30000))) ;@dol 26.02.04
+ .Q:qqpic=""  D  ;@dol 16.104 прозрачность (0/1) и выравнивание
+ ..I "M,F,R,"'[$E(qqpic,1,2) S qclr=$P(qqpic,",",2),qal=$P(qqpic,",",3),qqzS=$P(qqpic,",",4,5) S:qclr="" qclr=1 Q  ;непрозрачен по умолчанию
+ ..I "M,"'[$E(qqpic,1,2) S qclr=$P(qqpic,",",3),qal=$P(qqpic,",",4),qqzS=$P(qqpic,",",5,6) S:qclr="" qclr=0 Q  ;прозрачен по умолчанию
+ ..I $E(qqpic,$L(qqpic))=")" S qclr=1,qal=0 Q  ;M, непрозрачен по умолчанию
+ ..S qclr=$RE($P($RE(qqpic),")")),qal=$P(qclr,",",3),qqzS=$P(qclr,",",5,6),qclr=$P(qclr,",",2) S:qclr="" qclr=1 S qqpic=$P(qqpic,")",1,$L(qqpic,")")-1)_")"
+ .D ..wbmp("pe"_qqnump_qqobim,qqpic)
+ .D ..wM(qwin_".T2","M9",1,0,$S(qqci="":"-1",1:qqci)_" "_$P(qqty," ",1,2))
+ .D:$G(qqzS)'=""
+ ..I $E(qqzS)=$E(">") S qqzS=$E(qqzS,2,255) D ..wM("pe"_qqnump_qqobim,"Thumb",$S($P(qqzS,",",1):$P(qqzS,",",1),1:-1),$S($P(qqzS,",",2):$P(qqzS,",",2),1:-1)) Q  ;@Dima&Dol 14.04.07 вписывание в заданный размер
+ ..D ..wM("pe"_qqnump_qqobim,"ScaleBitmap",$S($P(qqzS,",",1):$P(qqzS,",",1),1:-1),$S($P(qqzS,",",2):$P(qqzS,",",2),1:-1)) ;@Dima&Dol 15.03.07 желаемые размеры
+ .D ..wP(qwin_".T2","M4","pe"_qqnump_qqobim,"",$P(qqty," ",3),qclr)
+ .D:qal ..wP(,"CellPictureAlign",qal,"",$P(qqty," ",3))
+ .S qqobim=qqobim+1
+ I $$$Tree S $$$GloRef=qqRef
+ Q:$Q "" Q
+```
+
+---
+
+## Complete Method Index
+
+All available methods in alphabetical order:
+
+1. **AAVerObj**
+2. **AFonFind** - Запуск поиска в фоне (через $Job aFonFind^%ooLibrary.qWORD.1())...
+3. **APOPfon**
+4. **ASMTPfon**
+5. **Adm**
+6. **Anal**
+7. **Analit**
+8. **AnyTree**
+9. **Au**
+10. **AvtoFind**
+11. **BaseIni**
+12. **BasePar**
+13. **BrCall**
+14. **BrCall235**
+15. **BrCall235Ex**
+16. **BrScript**
+17. **Browser**
+18. **ButtonDestr**
+19. **CRTF**
+20. **CXML** - Преобразование строки для XML. (Замена спец.символов)...
+21. **CXMLdoc** - Вставка тега  вместо $C(13,10) в строку...
+22. **CXMLnot**
+23. **CallDCpar**
+24. **CallDef**
+25. **CallEx**
+26. **CallGM**
+27. **CallMenu**
+28. **CallObj**
+29. **CallObjN**
+30. **CallPrint**
+31. **CallQStat**
+32. **CallQuest**
+33. **CallRel**
+34. **CallRel1**
+35. **CallRelView**
+36. **CallRelView1**
+37. **CallSaveGM**
+38. **CallTB**
+39. **CallTabs**
+40. **CallVocCor**
+41. **CallWoc**
+42. **ChCode**
+43. **ChObjView**
+44. **ChViewPar**
+45. **ChangeMy**
+46. **ChgWin**
+47. **Chiqqw**
+48. **Chqqwqqo**
+49. **ClearCache**
+50. **ClientPath**
+51. **CloseDev**
+52. **CloseLog**
+53. **CloseLogANK**
+54. **CloseWindow**
+55. **Cod116**
+56. **Cod154**
+57. **Cod52** - Arg2=0 - Преобразовать число Arg1 в число в вистеме счисления по основанию 52 (английские буквы). Ar...
+58. **CodAdd** - функция добавляет +Arg1(+1 по умолчанию) к коду qqpar1.( A-Z,a-z) Arg2=1 - компактный код (задейство...
+59. **CodObj**
+60. **ColColp**
+61. **ColRel**
+62. **ColWidth**
+63. **ColorDialog**
+64. **Compress**
+65. **ConvertTag2OO**
+66. **CopyFileToServer**
+67. **CreAr**
+68. **CreArDi**
+69. **CreArY**
+70. **CreCol**
+71. **CreObj**
+72. **CreObjView**
+73. **CreSQLObj**
+74. **CreSortV** - Создание локального словаря сортировки для понятия qqw объекта qqo Value - выражение для вычисления ...
+75. **CreStr**
+76. **CreTB323**
+77. **CreTitleTab**
+78. **CreVo**
+79. **CreVoAdd**
+80. **CreVoObj**
+81. **CreVoRef**
+82. **CreXDBF**
+83. **CreXSQL**
+84. **CreXXX0**
+85. **CreZcordtu**
+86. **Create**
+87. **CreateDBFFOX**
+88. **CresysL**
+89. **DBF**
+90. **DBFInd**
+91. **DBFf**
+92. **DBFn**
+93. **DBFr**
+94. **DColor**
+95. **DCpar**
+96. **DelA**
+97. **Diag**
+98. **DiagVRML**
+99. **DiagVRML0**
+100. **DiagWE**
+101. **DoPaObj**
+102. **DynPar**
+103. **EditDoc**
+104. **EditDocRE**
+105. **EditTest**
+106. **EditText**
+107. **Encrypt**
+108. **EndEdit**
+109. **EndOP**
+110. **Error**
+111. **Estat**
+112. **EstatSR**
+113. **EventTimer**
+114. **ExecExitCode**
+115. **Expand1**
+116. **FDragDrop**
+117. **FastKey** - Быстрый вариант qW.Key РАБОТАЕТ ТОЛЬКО ДЛЯ НЕПУСТЫХ ЗНАЧЕНИЙ кодируемых понятий (или D*-понятий) Пои...
+118. **FileLoad**
+119. **FileSave**
+120. **Find**
+121. **FindAll**
+122. **FindClass**
+123. **FindFonEnd**
+124. **Fix**
+125. **FlatButton**
+126. **FolderDialog**
+127. **ForTTips** - Для всплывающих подсказок (понятие X7102) Возвращает спискок в виде строк: имя понятие - значение qq...
+128. **G** - Получить значение понятия qqpar1 для текущего qqc экземпляра объекта qqo....
+129. **GC** - Получить коды значения или значения по списку кодов. Только для кодируемых понятий !!! qqw - код пон...
+130. **GE** - Взять значение понятия редактируемого экземпляра объекта. Если значение понятия было отредактировано...
+131. **GG**
+132. **GGdef**
+133. **GH**
+134. **GMFileExp**
+135. **GMFileImp** - • classmethod GT**(qqoo As ****, qqw As ****, qqc As ****, nmax As ****, xml As **** = 0, leer As **...
+136. **GP**
+137. **GT** - Взять текстовое понятие в виде строки с разделителями $C(13,10). nmax - максимальное кол-во строк. Е...
+138. **GTab** - Взять параметр текущей закладки qqnumpT - номер окна закладки (не задано - текущее) ngr - номер груп...
+139. **GW** - Создание массива W для списка понятий (Arg1) относительно экземпляра текущего объекта (используется ...
+140. **GWlist** - Занести в массив W значения списка понятий qqwl (через пробел) для экземпляра qqcl объекта qqol...
+141. **GZ** - Найти значение понятия qqw в объекте qqoo через общие значения списка qqwl (через пробел) значений п...
+142. **GenWoc**
+143. **GenWocXch**
+144. **Get** - Добыча значения понятия qqw объекта qObj из других объектов . Если значение понятия в поддереве - вы...
+145. **GetBqqnump**
+146. **GetCellToolTip**
+147. **GetDLValues**
+148. **GetJrnXML**
+149. **GetLine** - взять данные для строки объекта ;qqc - код экземпляра ;qqo - код объекта ;qqpar3 - строка вернуть с ...
+150. **GetName**
+151. **GetObjRuls** - • method GetWoc**(Arg1 As ****, Arg2 As ****)** returns  
+
+Получить значения по их кодам. Arg1 - код...
+152. **GetPar**
+153. **GetProp**
+154. **GetProtocol**
+155. **GetRelevXML**
+156. **GetViewXML**
+157. **GetWoc** - Получить значения по их кодам. Arg1 - код понятия Arg2 - код (или коды через пробел) значения...
+158. **GetXML**
+159. **GetXMLglob**
+160. **Glob** - Метод выдает имя массива для объекта типа Массив (%Имя Массива в описании объекта @@qW.Glob(... ) Le...
+161. **Grid**
+162. **GridColor**
+163. **GtoExt** - Преобразование формата хранения во внешнее представление. dtype - тип данных value - значение Arg - ...
+164. **History**
+165. **Ind2**
+166. **Init**
+167. **InnerC**
+168. **InstSysClass**
+169. **Key** - Поиск следующего экземпляра объекта для строки кодов понятий (значения в массиве W). Возвращает код ...
+170. **Key4** - • method KeyNum**(qObj As ****, qqwl As ****, qqc0 As ****)** returns nothing. 
+
+Возвращает кол-во э...
+171. **KeyNum** - Возвращает кол-во экземпляров объекта для строки кодов понятий содержащих такие же значения, как в м...
+172. **LikeSymb**
+173. **ListqqoCh**
+174. **LoadFile**
+175. **LoadJrnXML**
+176. **LoadMas**
+177. **LoadQRes**
+178. **LoadView**
+179. **LoadXML**
+180. **Local**
+181. **Log**
+182. **LoginWinCaption**
+183. **MACRO** - !!! ПРИМЕР макрообработки значения по умолчанию редактирования ячейки (X75). Должно начинаться знако...
+184. **MenuAn**
+185. **MenuAr**
+186. **MenuCre**
+187. **MenuEx**
+188. **MenuGr**
+189. **MenuObj**
+190. **MenuQ**
+191. **MenuServ**
+192. **MenuView**
+193. **MenuWoc**
+194. **Message** - • method ObjLget**(Obj As ****)** returns nothing. 
+
+Длина кода экземпляра объекта Obj...
+195. **Move**
+196. **NewResW**
+197. **NextEdit**
+198. **NoSort**
+199. **NoqW**
+200. **ONEVENT**
+201. **OOXSL**
+202. **OOXSLSetCellProperties**
+203. **OOXSLborder**
+204. **OOXSLhead**
+205. **OOXSLspecField**
+206. **Obj**
+207. **ObjAuto**
+208. **ObjLget** - Длина кода экземпляра объекта Obj...
+209. **ObjLqqc**
+210. **ObjNqARM**
+211. **ObjRefT** - Проверяет, является ли ObjP предком/родителем для Obj. Если Arg1=1 - проверка по общей схеме базы (п...
+212. **ObjShift**
+213. **ObjSort**
+214. **OnAutoDragging**
+215. **OnAutoEndDragging**
+216. **OnCEClick**
+217. **OnCEKeyDown**
+218. **OnColResize**
+219. **OnCommonEditExit**
+220. **OnControlClick**
+221. **OnDocumentClose**
+222. **OnDocumentSave**
+223. **OnDragStarting**
+224. **OnItemClickT1**
+225. **OnItemClickT2**
+226. **OnItemDblClickT1**
+227. **OnItemDblClickT2**
+228. **OnKeyDown**
+229. **OnKeyPress**
+230. **OnMSWordClose**
+231. **OnPage**
+232. **OnPageCSPROOT**
+233. **OnRevers**
+234. **OnScroll**
+235. **OnSelectDate**
+236. **OnTabCaption**
+237. **OnTabChange**
+238. **OnTabVisible**
+239. **OnTreeRichEdit**
+240. **OpenCFX**
+241. **OpenCFXNEW**
+242. **OpenCHelp**
+243. **OpenDHelp**
+244. **OpenDate**
+245. **OpenDev**
+246. **OpenDialog**
+247. **OpenDoc**
+248. **OpenDsnDialog**
+249. **OpenEvent**
+250. **OpenFile**
+251. **OpenFolderDialog**
+252. **OpenHelp**
+253. **OpenIE**
+254. **OpenLoadFile**
+255. **OpenLoadFileDo**
+256. **OpenMedia**
+257. **OpenOC**
+258. **OpenPic**
+259. **OpenPicEdit**
+260. **OpenPrint**
+261. **OpenQueryPar**
+262. **OpenReadFile**
+263. **OpenText**
+264. **OpenTimer**
+265. **OpenVHelp**
+266. **OpenWebDiag**
+267. **OpenWinColorDialog**
+268. **OpenWinColorDialogMenu**
+269. **OpenWinDialog**
+270. **OpenWindow**
+271. **PQ**
+272. **PSYN**
+273. **ParStr**
+274. **ParserXML**
+275. **Print**
+276. **Print2**
+277. **Print2DocOpenCreate**
+278. **Print2DocOpenDestroy**
+279. **Print2GetDbf**
+280. **Print2GetGlbObj**
+281. **Print2GetGlbPrs**
+282. **Print2GetGlbRef**
+283. **Print2GetMergeObj**
+284. **Print2GetOdf**
+285. **Print2GetOdfCol**
+286. **Print2GetProcObj**
+287. **Print2GetRcvr**
+288. **Print2GetRef**
+289. **Print2GetResAct**
+290. **Print2GetTxt**
+291. **Print2GetVar**
+292. **Print2GetXxl**
+293. **Print2GetXxlCol**
+294. **Print2HTMLMergeCreate**
+295. **Print2HTMLMergeDestroy**
+296. **Print2Mes**
+297. **Print2Open**
+298. **Print2SendDbf**
+299. **Print2SendOdf**
+300. **Print2SendTxt**
+301. **Print2SendXxl**
+302. **Print2SetGlb**
+303. **Print2SetGlbObj**
+304. **Print2SetGlbObjAll**
+305. **Print2SetGlbPrsAll**
+306. **Print2XxlConvertEncoding**
+307. **Print2XxlProcAddPics**
+308. **Print2XxlProcCloseMIME**
+309. **Print2XxlProcCreate**
+310. **Print2XxlProcInit**
+311. **Print2XxlProcTrans**
+312. **PrintColl**
+313. **PrintList**
+314. **PrintStart**
+315. **ProjVerNotOlder**
+316. **PutXMLfile**
+317. **QUWoc**
+318. **QUser**
+319. **QView**
+320. **Query**
+321. **QueryAr**
+322. **QueryCSP**
+323. **QueryCSPXML**
+324. **QueryCon**
+325. **QueryExt**
+326. **QueryFix**
+327. **QueryVs8**
+328. **QueryWeb**
+329. **Question**
+330. **QuestionM**
+331. **RNote**
+332. **RT**
+333. **ReadClientFile**
+334. **RecCor**
+335. **RecDel**
+336. **RecDelOref**
+337. **RecDelRel**
+338. **RecIns**
+339. **RecNew**
+340. **RecNewD**
+341. **RecNewP**
+342. **RecObj**
+343. **RecPost**
+344. **RecRaz**
+345. **RecRel**
+346. **RecRelAll**
+347. **RecRev**
+348. **RecTmp**
+349. **RecVer**
+350. **RecVerNoDef**
+351. **RecVerOp**
+352. **RedCC**
+353. **RedDCpar**
+354. **RedTest**
+355. **Redview**
+356. **RefVirt** - Определяет, есть ли для объекта qqo виртуальные предки (до объекта qqop)...
+357. **RelView**
+358. **RelWoc** - Создать альтернативный словарь для сортировки по перечню релевантных Value - выражение для значения ...
+359. **RepObjView**
+360. **RepeatedTimer**
+361. **ResetSrt**
+362. **Resize**
+363. **RestView**
+364. **RestView8**
+365. **RestoreArray**
+366. **RestoreDirTree**
+367. **RulSave**
+368. **RulsDo**
+369. **Run**
+370. **RuntimeAction**
+371. **RusU8**
+372. **SAXXML**
+373. **SECEncrLet**
+374. **SECGetKey**
+375. **SECGetSbox**
+376. **SECSHA**
+377. **SECUEncrLet**
+378. **SECg28147**
+379. **SECx32bToInt**
+380. **SECxBsToHs**
+381. **SECxInsSpace**
+382. **SECxIntTo32b**
+383. **SECxshiftL**
+384. **SOAP**
+385. **SQLClose** - Arg2=1-> Закрытие SQL соединения (по умолчанию Arg2=0) Arg2=0->Закрытие ResultSet (требуется если .....
+386. **SQLCloseTcp** - Arg1=1-> Разрыв TCP соединения и выход из Gateway.exe Arg1=2-> Разрыв TCP соединения и перевод Gatew...
+387. **SQLCon** - Открытие ADO соединения...
+388. **SQLConEx**
+389. **SQLConTcp**
+390. **SQLExec** - Выполнение SQL-запроса SQL - запрос SQL...
+391. **SQLExecBf** - отложенное выполнение...
+392. **SQLGB** - Используется при организации обмена информацией с SQL...
+393. **SQLGetF** - Получение списка полей таблицы tbl текущего соединения в %qGWF...
+394. **SQLGetT** - Получение списка таблиц текущего соединения в %qGWT...
+395. **SQLNextB** - Перемещение SQL курсора на следующую позицию Arg2=0 -> Более быстрое перемещение SQL курсора на след...
+396. **SQLNextBQ** - Перемещение SQL курсора на следующую позицию Arg2=0 -> Более быстрое перемещение SQL курсора на след...
+397. **SQLRec**
+398. **SQLSend** - Используется при организации обмена информацией с SQL...
+399. **SQLSetActRst** - Устанавливает активным указанный ResultSet. Вызов функции необходим перед выполнением SQLNextB(Con,0...
+400. **SQLini**
+401. **SQLref**
+402. **SRColWidth**
+403. **SaveMas**
+404. **SaveToClipbrd**
+405. **SaveView**
+406. **SaveView8**
+407. **SendXML**
+408. **SendXMLWoc**
+409. **SetBLOB**
+410. **SetPar**
+411. **SetVs**
+412. **SetVsLst**
+413. **SetX119**
+414. **SetZMAS**
+415. **SetZTMP**
+416. **Setdpwin**
+417. **Setx52**
+418. **Sort**
+419. **SortTree**
+420. **SplitterBar**
+421. **StartEdit**
+422. **StartEditT1**
+423. **StartEditT2**
+424. **StartWebXML**
+425. **StreemCnv** - Преобразование потока (НЕ ДОДЕЛАНО)...
+426. **StreemExp** - Создание массива потока ref - ссылка на массив qqo - код объекта. Если qqo="" сохранять поддеревья в...
+427. **StreemImp** - Восстановить массив потока ref - ссылка на массив Rel =1 - записать восстановленные в релевантные qq...
+428. **SynJrn**
+429. **T1ColHButton**
+430. **T2ColHButton**
+431. **T2ColHButtonClr**
+432. **T2ColHButtonDo**
+433. **TBF**
+434. **TFormOnClose**
+435. **TLTBcreate**
+436. **TLcreateimlist**
+437. **TLgetMenu**
+438. **TLinvis**
+439. **TLnameTB**
+440. **TLnameTBbut**
+441. **TLnumPic**
+442. **TLonToolButtonClick**
+443. **TLwpic**
+444. **TMenuItemOnClick**
+445. **TMenuObj**
+446. **TMenuServ**
+447. **TTab**
+448. **TToolButtonOnClick**
+449. **TestPaste**
+450. **TestSOAP2**
+451. **TestSort**
+452. **TextEdit**
+453. **TextHelpRTF**
+454. **TextHelpRTF0**
+455. **ToolbarCreateButton**
+456. **TransfLocal**
+457. **Transform**
+458. **Translit** - Транслитерация русских больших и маленьких букв Arg1 - строка...
+459. **UpdFiles**
+460. **UserClass**
+461. **UserOrd** - Вычисляет следующий (предыдущий) qqc для объекта с проверкой на общее начало если полученный qqc не ...
+462. **Util**
+463. **VLoadData**
+464. **Value**
+465. **Valueer**
+466. **VerBase**
+467. **VerCall**
+468. **VerErr**
+469. **VerObj**
+470. **VerObjCall**
+471. **VerTempor**
+472. **VerWoc**
+473. **VerWocCall**
+474. **VerXMLName**
+475. **Verify**
+476. **VerqUSER**
+477. **ViEdit**
+478. **ViewStat**
+479. **Virt**
+480. **Vs8P**
+481. **WDXGM1**
+482. **WDXGM2**
+483. **Wait**
+484. **WrWin**
+485. **WriteAuditEvent**
+486. **X182**
+487. **X720Rel**
+488. **X74Xcd** - Специальное правило проверки для редактирования @ZXc и @ZXd qqwcd=Xc или Xd Создатся W(qqwcd) и изме...
+489. **XML**
+490. **XMLB**
+491. **XMLJrn**
+492. **XMLO**
+493. **XSL**
+494. **XSLO**
+495. **XSLObj**
+496. **XSLcom**
+497. **XSLcor**
+498. **XXXCxWocx711**
+499. **Xecute**
+500. **XslAddAction**
+501. **XslAddHeadAfter**
+502. **XslAddHeadBefore**
+503. **XslAddPageBreak**
+504. **XslAddSize**
+505. **XslCheckSize**
+506. **XslGetPageBreakObjList**
+507. **XslGetPageBreakPos**
+508. **XslNumberFormat**
+509. **XslPath**
+510. **XslPrcPageBreakObj**
+511. **XslPrcPageBreakPos**
+512. **XslSetField**
+513. **XslSetStyle**
+514. **XslTransSize**
+515. **XslWrite**
+516. **aPOP**
+517. **aSMTP**
+518. **aSMTPretest**
+519. **autoCodeTableDBF**
+520. **crst**
+521. **csav**
+522. **dblqw**
+523. **gForm** - qqnmax - максимально допустимое кол-во обрабатываемых экземпляров объекта qxml=1 - формирование XML ...
+524. **gFormdbf**
+525. **gFormdbfwrite**
+526. **gFormwrite**
+527. **gOrder** - ggcc(qorder,qqo,qqcc,qqcc0) ;,qqz,qqz0) ;qorder=1/-1 следующий/предыдущий код, qorder=0 проверка на ...
+528. **gOrderSort** - Для использовании в X529 ссылочных объектов. Выполняет сортировку экземпляров по значению понятия qq...
+529. **gOrderVsys** - • method gRel**(Arg1 As ****, qObj As ****, qqc As ****, Oref As ****, Arg2 As ****)** returns  
+
+Ра...
+530. **gRel** - Работа с текущим ($$$Relind) перечнем релевантных. Arg1= 0 -очистить + - занести - - удалить qObj - ...
+531. **gTempor** - • method oZ1310() returns nothing....
+532. **getDataLinkResultList**
+533. **getLocal**
+534. **getPicSize**
+535. **getPrintParam**
+536. **getSaxXML**
+537. **getSaxXMLData**
+538. **getSaxXMLField**
+539. **getSaxXMLFieldByLen**
+540. **getSaxXMLFieldBySep**
+541. **getst**
+542. **mImpOp**
+543. **mapSQL**
+544. **noJrn**
+545. **oZ1310**
+546. **oZLA**
+547. **oZLAY**
+548. **oZListOfView**
+549. **oZTMP**
+550. **oZVs8** - Расшифровка поискового образа для вывода в заголовок отчета (если режим Уточнения). qqnump8 - номер ...
+551. **oZZdate** - W("@ZZdateWeek")=кол-во отображаемых недель...
+552. **oZZrasp** - Создание массива расписания на заданный день (Arg1 в формате ГГГГММДД). tlist - строка описания. Есл...
+553. **oZZraspday** - Возврат подходящей для заданного дня (Arg1) строки расписания. Параметры см. qW.oZZrasp...
+554. **oZZraspw** - Расшифровка (визуализация) расписания qqwr - код понятия расписания Arg2=1 - выводить только время...
+555. **oZcordtu** - Дата, время,пользователь коррекции и создания текущего экземпляра объекта. Arg1=1 - только коррекция...
+556. **oZdtuco**
+557. **oZdtucor**
+558. **oZdtucr**
+559. **oZdtudel**
+560. **oZnum** - Специальное обобщение для счетчиков (иерархических) кол-ва экземпляров для печатных форм. Можно испо...
+561. **oZnumBase** - Кол-во экземпляров в базе...
+562. **oZnumRel** - Счетчик релевантных...
+563. **oZrXc**
+564. **oZrXd**
+565. **oneWin**
+566. **parent**
+567. **q4View**
+568. **q4imp**
+569. **qARMFont**
+570. **qAnal**
+571. **qConv**
+572. **qConvT**
+573. **qFind** - поиск по Vs(qqnump,8,qqo,qqw)=условие qqmod - варант поиска 0 - в перечне релевантных только найденн...
+574. **qFindA**
+575. **qFindC**
+576. **qFindList**
+577. **qFindList0**
+578. **qFindN** - • method qFindNTest** (qqcnt As **** = 0, qql As ****, qqlang As ****, qviewf As ****, qlistF As ***...
+579. **qFindNTest**
+580. **qFindNew**
+581. **qFonFindErr**
+582. **qGrabCol**
+583. **qObjConv**
+584. **qObjNum** - Подсчет экземпляров объектов в базе или в перечне релевантных. Если qqo="", то всех....
+585. **qOrd**
+586. **qRef** - Восстановить ссылку W("Zref") по qqci (соответствует W("Zrol",1))....
+587. **qWoc** - gorw() ; ;qqpar5=1 - заполнять W(qqw),W("C"_qqw) ;qqpar6'="" - заполнять массив @qqpar6 ;qqpar6="Zld...
+588. **qWocCnv** - Выполняет преобразование словаря понятия в зависимости от свойства x711 ("%Организация словаря"). Па...
+589. **qmView**
+590. **qqlang**
+591. **qqnumpT**
+592. **qqtime**
+593. **rCodeWoc** - • method rCopy**(qqo As ****, qqc As ****, qqofrom As ****, qqcfrom As ****, qqwlist As ****, qqmovc...
+594. **rCopy** - Копирование экземпляров qqo - код объекта qqc - код экземпляра qqofrom - код копируемого объекта qqc...
+595. **rCopyTree** - Копирование поддеревьев (пока только для одного объекта) qqo - код объекта вершины qqc - код экземпл...
+596. **rCor** - Коррекция экземпляра объекта. Сборка мусра в словарях не производится (отложенная) qqlw - список кор...
+597. **rCorSQL**
+598. **rDel**
+599. **rDelAll** - Быстрое удаление всех экземпляров объекта и объектов-потомков (если сh=1) Nogr=1 - НЕ собирать мусор...
+600. **rDelAllView** - Удаление экземпляров всех объектов отображения Arg1...
+601. **rDelBeg**
+602. **rDelTree**
+603. **rIncM**
+604. **rIns**
+605. **rJrn** - Восстановление журнала. mas - ссылка на запись в журнале. если число - ^QJ(1,"XJrn",число) all=1 - в...
+606. **rNew** - Запись нового экземпляра объекта. функция добавляет +шаг к коду qqpar1. A-z -диапазон цифр кода ----...
+607. **rNewPr** - Недиалоговое порождение поддерева экземпляра объекта. qqo - код объекта qqc - код экземпляра текущег...
+608. **rSort** - Пересортировка поддерева экземпляров объекта qqo qqctop - код экземпляра обьекта верхнего уровня qqw...
+609. **rTest** - Метод возвращает (через пробел): - признак наличия значений понятий (кроме создания/коррекции); - пр...
+610. **rTmpVer** - Проверка условия темпоральности коррекции (понятие X5280) Возвращает qqo_" "_qqc экземпляра объекта,...
+611. **rVer** - Проверка наличия экземпляра Arg2 объекта Arg1. Используется в правиле проверки понятия C....
+612. **rWoc** - • method rWocNew**(Arg1 As ****, Arg2 As ****, Arg3 As ****)** returns  
+
+Запись в словарь Arg1 знач...
+613. **rWocNew** - Запись в словарь Arg1 значения Arg2 с кодом Arg3. Возвращает - 0 -все нормально; 1 - есть значение 2...
+614. **rWocRefLst** - Возвращает список (через пробел) ссылочных понятий (на R*) для понятия qw. Первое значение в списке ...
+615. **rWocx711**
+616. **rX5247**
+617. **rZTMP**
+618. **s112**
+619. **savedat**
+620. **savedatnew**
+621. **savedatnew0**
+622. **scalePicSize**
+623. **slip**
+624. **syn**
+625. **sysR74**
+626. **sysView**
+627. **tagSequenceControl**
+628. **tmpGl**
+629. **v731**
+630. **vBLOBInit**
+631. **vBLOBLoad**
+632. **vStringGt**
+633. **vXecute**
+634. **vi**
+635. **wC**
+636. **wG**
+637. **wIRT**
+638. **wM**
+639. **wMByf**
+640. **wMet**
+641. **wMet8**
+642. **wP**
+643. **wTR**
+644. **wbmp**
+645. **wbut**
+646. **wbuttb**
+647. **wcelldpar**
+648. **wcellpic**
+649. **wcellsel**
+650. **wcellttips**
+651. **wcre**
+652. **wcrm**
+653. **wcro**
+654. **wcroCell**
+655. **wdbl**
+656. **wfoc**
+657. **wfot**
+658. **wgre**
+659. **windos**
+660. **wipa**
+661. **wpic**
+662. **wpoe**
+663. **wpot**
+664. **wqqotree**
+665. **write**
+666. **wrot**
+667. **wsize**
+668. **wwde**
+669. **wwrefr**
+670. **wwww**
+671. **wwwwFCBUT**
+672. **wwwwZXXadd**
+673. **wwwwZnum**
+674. **wzero**
+675. **xmlPath**
+676. **zAge**
+677. **zChSym**
+678. **zCnv**
+679. **zConvAdr**
+680. **zDW** - Возвращает день недели. Arg1 - дата в формате $Hrolog (если нормализованная, преобразовать через $ZD...
+681. **zDatBE** - Проверка даты на диапазон...
+682. **zDate**
+683. **zDbl**
+684. **zFIO**
+685. **zL**
+686. **zList**
+687. **zMLine**
+688. **zNameCase**
+689. **zNday**
+690. **zNoLeer** - Убрать "малозначащие" пробелы (после цифры, после точки, задвоенные\ведущие\завершающие пробелы...
+691. **zNum** - Кол-во экземпляров объекта Arg1 подчиненных текущему. Rel=1 учет режима уточнения, если есть релеван...
+692. **zNumDay**
+693. **zNumPr**
+694. **zPr**
+695. **zRcvt**
+696. **zRep**
+697. **zReplace**
+698. **zSet**
+699. **zSum**
+700. **zTLine**
+701. **zTime**
+702. **zTmp** - УЖЕ НЕ ИСПОЛЬЗУЕТСЯ Вычисляет для текущего экземпляра объекта условие темпоральной коррекции. MainOb...
+703. **zTmpI**
+704. **zTraspisan**
+705. **zZod**
+706. **zaddm**
+707. **zmList**
+708. **zmList1**
+709. **zsymbol**
+710. **zwrk1**
+
+## Common Usage Patterns
+
+### Opening a Window
+
+```objectscript
+// Open view with specific parameters
+D qARM.OpenWindow(,,,"1 obj_code 1",,,"view_code")
+```
+
+### Data Retrieval
+
+```objectscript
+// Get value from current object instance
+S value = ##class(%Library.qWORD).G(qqw)
+```
+
+### Search and Filter
+
+```objectscript
+// Find records with conditions
+D qARM.Find(0, 100)  // Max 100 results
+```
+
+---
+
+*Generated from qWORD.md, TqARM.txt, and qarm.xml*
