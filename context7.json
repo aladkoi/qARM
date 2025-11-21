@@ -3,11 +3,6 @@
   "projectTitle": "Qarm",
   "description": "No description available as the provided content is empty.",
   "branch": "main",
-  "includeFiles": [
-    "qWORD.md",
-    "llms.txt",
-    "README.md"
-  ]
   "excludeFolders": [
     "archive",
     "archived",
